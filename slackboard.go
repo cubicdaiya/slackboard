@@ -5,7 +5,6 @@ import (
 	"flag"
 	"github.com/Sirupsen/logrus"
 	statsGo "github.com/fukata/golang-stats-api-handler"
-	"html/template"
 	"log"
 	"net"
 	"net/http"
@@ -60,8 +59,6 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	slackboard.IndexTemplate = template.Must(template.ParseFiles("web/index.html"))
 
 	http.HandleFunc("/notify", slackboard.NotifyHandler)
 	http.HandleFunc("/app/config", slackboard.ConfigAppHandler)
