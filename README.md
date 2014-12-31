@@ -6,7 +6,7 @@ Slackboard is a board server for Slack.
 
 Slackboard is still under early development phase.
 
-## Installation
+## Build
 
 ```
 make gom
