@@ -17,3 +17,5 @@ parse = "full"
 access_log = "stdout"
 error_log = "stderr"
 level = "error"
+
+[ui]
