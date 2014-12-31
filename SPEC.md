@@ -24,11 +24,11 @@ The following JSON is a request-body example.
 }
 ```
 
-|name|type  |description               |required|note            |
-|----|------|--------------------------|--------|----------------|
-|tag |string|tag for selecting channel |o       |                |
-|host|string|hostname(client)          |-       |                |
-|text|string|notification text         |o       |                |
+|name|type  |description               |required|note|
+|----|------|--------------------------|--------|----|
+|tag |string|tag for selecting channel |o       |    |
+|host|string|hostname(client)          |-       |    |
+|text|string|notification text         |o       |    |
 
 
 The following JSON is a response-body example from Slackboard. In this case, a status is 200(OK).
