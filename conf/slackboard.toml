@@ -1,0 +1,19 @@
+[core]
+port = "29800"
+slack_url = "https://hooks.slack.com/services/..."
+
+[[tags]]
+tag = "general"
+channel = "#general"
+
+[[tags]]
+tag = "random"
+channel = "#random"
+username = "slackboard"
+icon_emoji = ":clipboard:"
+parse = "full"
+
+[log]
+access_log = "stdout"
+error_log = "stderr"
+level = "error"

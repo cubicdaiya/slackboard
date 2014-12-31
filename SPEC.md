@@ -1,0 +1,50 @@
+# Specification for Slackboard
+
+Slackboard is a board server for Slack. It accepts a HTTP request.
+
+## API
+
+Slackboard has some APIs.
+
+ * [POST /notify](#post-notify)
+ * [GET /stat/go](#get-statgo)
+ * [GET /config/app](#get-configapp)
+
+### POST /notify
+
+Accepts a HTTP request for notification to Slack.
+
+The following JSON is a request-body example.
+
+```json
+{
+    "tag": "random",
+    "host": "localhost",
+    "text": "notification text"
+}
+```
+
+|name|type  |description               |required|note            |
+|----|------|--------------------------|--------|----------------|
+|tag |string|tag for selecting channel |o       |                |
+|host|string|hostname(client)          |-       |                |
+|text|string|notification text         |o       |                |
+
+
+The following JSON is a response-body example from Slackboard. In this case, a status is 200(OK).
+
+```json
+{
+    "message" : "ok",
+}
+```
+
+When Slackboard receives an invalid request(for example, malformed body is included), a status of response it returns is 400(Bad Request).
+
+### GET /stat/go
+
+Returns a statictics for golang-runtime. See [golang-stats-api-handler](https://github.com/fukata/golang-stats-api-handler) about details.
+
+### GET /config/app
+
+Returns a current configuration for Slackboard.
