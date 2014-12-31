@@ -27,3 +27,10 @@ See [SPEC.md](https://github.com/cubicdaiya/slackboard/blob/master/SPEC.md) abou
 ```
 slackboard -c conf/slackboard.toml
 ```
+
+## License
+
+Copyright 2014 Tatsuhiko Kubo
+
+
+Licensed under the MIT License.
