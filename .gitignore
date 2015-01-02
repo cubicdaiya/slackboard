@@ -1,2 +1,3 @@
 .vendor
 bin/slackboard
+bin/slackboard-cli
