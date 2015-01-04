@@ -27,5 +27,7 @@ func SetupUI() {
 
 func UIHandler(w http.ResponseWriter, r *http.Request) {
 	LogAcceptedRequest("/ui", r.Method, r.Proto, r.ContentLength)
+	w.Header().Set("Content-Type", "text/html")
+	w.Header().Set("Server", fmt.Sprintf("slackboard/%s", Version))
 	IndexTemplate.Execute(w, ConfSlackboard.Tags)
 }
