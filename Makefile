@@ -17,4 +17,4 @@ fmt:
 	go fmt ./...
 
 clean:
-	rm -rf bin/slackboard
+	rm -rf bin/slackboard*
