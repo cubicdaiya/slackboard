@@ -8,10 +8,10 @@ bundle:
 	gom install
 
 bin/slackboard: slackboard.go slackboard/*.go
-	gom build -ldflags '-s -w' -o bin/slackboard slackboard.go
+	gom build $(GOFLAGS) -o bin/slackboard slackboard.go
 
 bin/slackboard-cli: slackboard-cli.go slackboard/*.go
-	gom build -ldflags '-s -w' -o bin/slackboard-cli slackboard-cli.go
+	gom build $(GOFLAGS) -o bin/slackboard-cli slackboard-cli.go
 
 fmt:
 	go fmt ./...
