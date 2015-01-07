@@ -62,7 +62,7 @@ func main() {
 
 	http.HandleFunc("/notify", slackboard.NotifyHandler)
 	http.HandleFunc("/app/config", slackboard.ConfigAppHandler)
-	http.HandleFunc("/stats/go", statsGo.Handler)
+	http.HandleFunc("/stat/go", statsGo.Handler)
 	slackboard.SetupUI()
 
 	// Listen TCP Port
