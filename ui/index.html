@@ -29,14 +29,16 @@
         <th>username</th>
         <th>icon_emoji</th>
         <th>parse</th>
+        <th>count</th>
       </tr>
       {{range .}}
       <tr>
-        <td>{{ .Tag}}</td>
-        <td>{{ .Channel}}</td>
-        <td>{{ .Username}}</td>
-        <td>{{ .IconEmoji}}</td>
-        <td>{{ .Parse}}</td>
+        <td>{{ .Tag.Tag}}</td>
+        <td>{{ .Tag.Channel}}</td>
+        <td>{{ .Tag.Username}}</td>
+        <td>{{ .Tag.IconEmoji}}</td>
+        <td>{{ .Tag.Parse}}</td>
+        <td>{{ .Count}}</td>
       </tr>
       {{end}}
     </table>

@@ -7,6 +7,11 @@ import (
 	"os"
 )
 
+type Topic struct {
+	Tag   SectionTag
+	Count uint64
+}
+
 func SetupUI() {
 	root := ConfSlackboard.UI.Root
 	index := fmt.Sprintf("%s/index.html", root)
@@ -29,5 +34,5 @@ func UIHandler(w http.ResponseWriter, r *http.Request) {
 	LogAcceptedRequest("/ui", r.Method, r.Proto, r.ContentLength)
 	w.Header().Set("Content-Type", "text/html")
 	w.Header().Set("Server", fmt.Sprintf("slackboard/%s", Version))
-	IndexTemplate.Execute(w, ConfSlackboard.Tags)
+	IndexTemplate.Execute(w, Topics)
 }

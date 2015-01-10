@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strings"
+	"sync/atomic"
 )
 
 type SlackPayload struct {
@@ -64,8 +65,9 @@ func NotifyHandler(w http.ResponseWriter, r *http.Request) {
 
 	LogError.Debug("find tag")
 	sent := false
-	for _, tag := range ConfSlackboard.Tags {
+	for i, tag := range ConfSlackboard.Tags {
 		if tag.Tag == req.Tag {
+			atomic.AddUint64(&Topics[i].Count, 1)
 			payload := &SlackPayload{
 				Channel:   tag.Channel,
 				Username:  tag.Username,
