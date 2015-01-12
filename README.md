@@ -28,6 +28,14 @@ See [SPEC.md](https://github.com/cubicdaiya/slackboard/blob/master/SPEC.md) abou
 slackboard -c conf/slackboard.toml
 ```
 
+## Client for Slackboard
+
+`slackboard-cli` is a client for `slackboard`. It reads `stdin` and sends a message to `slackboard`.
+
+```
+echo message | slackboard-cli -t test -s slackboard-host:29800
+``
+
 ## License
 
 Copyright 2014 Tatsuhiko Kubo
