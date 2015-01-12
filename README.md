@@ -34,7 +34,7 @@ slackboard -c conf/slackboard.toml
 
 ```
 echo message | slackboard-cli -t test -s slackboard-host:29800
-``
+```
 
 ## License
 
