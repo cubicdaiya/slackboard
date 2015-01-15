@@ -1,3 +1,3 @@
-gom 'github.com/fukata/golang-stats-api-handler', :commit => '2bf22cc37324d5cc14b87ba6dd618efc6510ed7a'
+gom 'github.com/fukata/golang-stats-api-handler', :commit => '7acca2d11b9a64063bf5b1d212fcc96c32c88e3a'
 gom 'github.com/BurntSushi/toml',                 :commit => '3883ac1ce943878302255f538fce319d23226223'
 gom 'github.com/Sirupsen/logrus',                 :tag    => 'v0.6.0'

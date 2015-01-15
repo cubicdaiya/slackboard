@@ -60,6 +60,7 @@ func main() {
 		log.Fatal(err)
 	}
 
+	statsGo.PrettyPrintEnabled()
 	http.HandleFunc("/notify", slackboard.NotifyHandler)
 	http.HandleFunc("/app/config", slackboard.ConfigAppHandler)
 	http.HandleFunc("/stat/go", statsGo.Handler)
