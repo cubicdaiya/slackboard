@@ -16,6 +16,7 @@ type LogReq struct {
 	Method        string `json:"method"`
 	Proto         string `json:"proto"`
 	ContentLength int64  `json:"content_length"`
+	Tag           string `json:"tag"`
 }
 
 type SlackboardFormatter struct {
@@ -58,7 +59,7 @@ func SetLogLevel(log *logrus.Logger, levelString string) error {
 	return nil
 }
 
-func LogAcceptedRequest(uri, method, proto string, length int64) {
+func LogAcceptedRequest(uri, method, proto string, length int64, tag string) {
 	log := &LogReq{
 		Type:          "accepted-request",
 		Time:          time.Now().Format("2006/01/02 15:04:05 MST"),
@@ -66,6 +67,7 @@ func LogAcceptedRequest(uri, method, proto string, length int64) {
 		Method:        method,
 		Proto:         proto,
 		ContentLength: length,
+		Tag:           tag,
 	}
 	logJSON, err := json.Marshal(log)
 	if err != nil {

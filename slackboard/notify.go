@@ -46,20 +46,22 @@ func sendNotification2Slack(payload *SlackPayload) error {
 
 func NotifyHandler(w http.ResponseWriter, r *http.Request) {
 	LogError.Debug("notify-request is Accepted")
-	LogAcceptedRequest("/notify", r.Method, r.Proto, r.ContentLength)
-
-	LogError.Debug("method check")
-	if r.Method != "POST" {
-		sendResponse(w, "invalid method", http.StatusBadRequest)
-		return
-	}
 
 	LogError.Debug("parse request body")
 	var req SlackboardPayload
 	reqBody, _ := ioutil.ReadAll(r.Body)
 	err := json.Unmarshal(reqBody, &req)
 	if err != nil {
+		LogAcceptedRequest("/notify", r.Method, r.Proto, r.ContentLength, "")
 		sendResponse(w, "Request-body is malformed", http.StatusBadRequest)
+		return
+	}
+
+	LogAcceptedRequest("/notify", r.Method, r.Proto, r.ContentLength, req.Tag)
+
+	LogError.Debug("method check")
+	if r.Method != "POST" {
+		sendResponse(w, "invalid method", http.StatusBadRequest)
 		return
 	}
 
