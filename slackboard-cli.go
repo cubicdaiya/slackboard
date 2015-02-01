@@ -54,6 +54,11 @@ func main() {
 		os.Exit(0)
 	}
 
+	if *server == "" && *tag == "" {
+		flag.PrintDefaults()
+		os.Exit(0)
+	}
+
 	if *server == "" {
 		log.Fatal("Specify slackboard server name")
 	}
