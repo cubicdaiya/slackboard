@@ -47,6 +47,7 @@ func main() {
 	version := flag.Bool("v", false, "slackboard version")
 	server := flag.String("s", "", "slackboard server name")
 	tag := flag.String("t", "", "slackboard tag name")
+	sync := flag.Bool("sync", false, "enable synchronous notification")
 	flag.Parse()
 
 	if *version {
@@ -78,6 +79,7 @@ func main() {
 		Tag:  *tag,
 		Host: hostname,
 		Text: text.String(),
+		Sync: *sync,
 	}
 
 	err = send(*server, payload)
