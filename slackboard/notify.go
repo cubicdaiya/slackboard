@@ -38,7 +38,7 @@ func sendNotification2Slack(payload *SlackPayload) error {
 		"application/json",
 		strings.NewReader(string(body)))
 
-	if resp.Status != "200" {
+	if resp.StatusCode != 200 {
 		return errors.New(fmt.Sprintf("Slack is not available:%s", resp.Status))
 	}
 
