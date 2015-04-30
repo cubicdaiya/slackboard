@@ -4,7 +4,7 @@ Slackboard is a board server for Slack.
 
 ## Status
 
-Slackboard is still under early development phase.
+Slackboard is production ready.
 
 ## Build
 
