@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"strings"
 	"sync/atomic"
+	"errors"
 )
 
 type SlackPayload struct {
@@ -21,6 +22,7 @@ type SlackboardPayload struct {
 	Tag  string `json:"tag"`
 	Host string `json:"host,omitempty"`
 	Text string `json:"text"`
+	Sync bool   `json:"sync,omitempty"`
 }
 
 func sendNotification2Slack(payload *SlackPayload) error {
@@ -35,6 +37,11 @@ func sendNotification2Slack(payload *SlackPayload) error {
 		ConfSlackboard.Core.SlackURL,
 		"application/json",
 		strings.NewReader(string(body)))
+
+	if resp.Status != "200" {
+		return errors.New(fmt.Sprintf("Slack is not available:%s", resp.Status))
+	}
+
 	if err != nil {
 		return err
 	}
@@ -77,22 +84,37 @@ func NotifyHandler(w http.ResponseWriter, r *http.Request) {
 				Text:      req.Text,
 				Parse:     tag.Parse,
 			}
-			err := sendNotification2Slack(payload)
-			if err != nil {
-				sendResponse(w, "failed to post message to slack", http.StatusBadGateway)
-				return
+
+			if req.Sync {
+				err := sendNotification2Slack(payload)
+				if err != nil {
+					sendResponse(w, "failed to post message to slack", http.StatusBadGateway)
+					return
+				}
+				sent = true
+			} else {
+				go func() {
+					err := sendNotification2Slack(payload)
+					if err != nil {
+						LogError.Error(fmt.Sprintf("failed to post message to slack:%s", err.Error()))
+					}
+				}()
 			}
-			sent = true
 		}
 
 	}
 
 	LogError.Debug("response to client")
-	if sent {
-		sendResponse(w, "ok", http.StatusOK)
-	} else {
-		msg := fmt.Sprintf("tag:%s is not found", req.Tag)
-		sendResponse(w, msg, http.StatusBadRequest)
-	}
 
+	if req.Sync {
+		if sent {
+			sendResponse(w, "ok", http.StatusOK)
+		} else {
+			msg := fmt.Sprintf("tag:%s is not found", req.Tag)
+			sendResponse(w, msg, http.StatusBadRequest)
+		}
+
+	} else {
+		sendResponse(w, "ok", http.StatusOK)
+	}
 }
