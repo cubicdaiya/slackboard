@@ -2,12 +2,12 @@ package slackboard
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
 	"strings"
 	"sync/atomic"
-	"errors"
 )
 
 type SlackPayload struct {
