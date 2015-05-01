@@ -8,7 +8,7 @@ import (
 func PrintVersion() {
 	fmt.Printf(`slackboard %s
 Compiler: %s %s
-Copyright (C) 2014 Tatsuhiko Kubo <cubicdaiya@gmail.com>
+Copyright (C) 2014-2015 Tatsuhiko Kubo <cubicdaiya@gmail.com>
 `,
 		Version,
 		runtime.Compiler,

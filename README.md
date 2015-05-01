@@ -38,7 +38,7 @@ echo message | slackboard-cli -t test -s slackboard-host:29800
 
 ## License
 
-Copyright 2014 Tatsuhiko Kubo
+Copyright 2014-2015 Tatsuhiko Kubo
 
 
 Licensed under the MIT License.
