@@ -1,6 +1,6 @@
 # Slackboard
 
-Slackboard is a board server for Slack.
+Slackboard is a proxy server for Slack.
 
 ## Status
 
