@@ -14,6 +14,8 @@ func main() {
 	server := flag.String("s", "", "slackboard server name")
 	tag := flag.String("t", "", "slackboard tag name")
 	sync := flag.Bool("sync", false, "enable synchronous notification")
+	notify := flag.Bool("notity", true, "enable notification to slackboard")
+	logfile := flag.String("log", "", "log-file path")
 	flag.Parse()
 
 	if *version {
@@ -42,7 +44,7 @@ func main() {
 	argv := flag.Args()
 
 	out, err := exec.Command(argv[0], argv[1:]...).CombinedOutput()
-	if err != nil {
+	if err != nil && *notify {
 		payload := &slackboard.SlackboardPayload{
 			Tag:  *tag,
 			Host: hostname,
@@ -55,4 +57,29 @@ func main() {
 			log.Fatal(err.Error())
 		}
 	}
+
+	if *logfile == "" {
+		return
+	}
+
+	fi, err := os.Stat(*logfile)
+	if err == nil {
+		if fi.IsDir() {
+			log.Fatalf("%s is a directory.", *logfile)
+		}
+		file, err := os.OpenFile(*logfile, os.O_RDWR|os.O_APPEND, os.ModePerm)
+		if err != nil {
+			log.Fatal(err.Error())
+		}
+		defer file.Close()
+		file.WriteString(string(out))
+	} else {
+		file, err := os.Create(*logfile)
+		if err != nil {
+			log.Fatal(err.Error())
+		}
+		defer file.Close()
+		file.WriteString(string(out))
+	}
+
 }
