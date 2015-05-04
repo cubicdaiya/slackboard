@@ -6,6 +6,15 @@ Slackboard is a proxy server for Slack.
 
 Slackboard is production ready.
 
+## Features
+
+ * `slackboard`
+  * A proxy server for slack
+ * `slackboard-cli`
+  * A client for `slackboard`
+ * `slackboard-log`
+  * A client like [`cronlog`](https://github.com/kazuho/kaztools/blob/master/cronlog) for `slackboard`
+
 ## Build
 
 ```
