@@ -45,6 +45,15 @@ If you want to send a notification-request to Slackboard synchronously, you may 
 echo message | slackboard-cli -t test -s slackboard-host:29800 -sync
 ```
 
+## Notification with slackboard-log
+
+`slackboard-log` is a client for `slackboard` also. `slackboard-log` is an utility like [`cronlog`](https://github.com/kazuho/kaztools/blob/master/cronlog).
+It sends a notification to `slackboard` when the command after `--` failed.
+
+```
+slackboard-log -s 127.0.0.1:29800 -t test -- some-command
+```
+
 ## License
 
 Copyright 2014-2015 Tatsuhiko Kubo
