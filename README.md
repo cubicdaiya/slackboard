@@ -47,8 +47,8 @@ echo message | slackboard-cli -t test -s slackboard-host:29800
 
 ### Synchronous notification with slackboard-cli
 
-From v0.3.0 `slackboard-cli` sends a notification-request to Slackboard asynchronously by default.
-If you want to send a notification-request to Slackboard synchronously, you may add the option `-sync` to `slackboard-cli`.
+From v0.3.0 `slackboard-cli` sends a notification-request to `slackboard` asynchronously by default.
+If you want to send a notification-request to `slackboard` synchronously, you may add the option `-sync` to `slackboard-cli`.
 
 ```
 echo message | slackboard-cli -t test -s slackboard-host:29800 -sync
