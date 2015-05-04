@@ -1,5 +1,5 @@
 
-all: bin/slackboard bin/slackboard-cli
+all: bin/slackboard bin/slackboard-cli bin/slackboard-log
 
 gom:
 	go get -u github.com/mattn/gom
@@ -12,6 +12,9 @@ bin/slackboard: slackboard.go slackboard/*.go
 
 bin/slackboard-cli: slackboard-cli.go slackboard/*.go
 	gom build $(GOFLAGS) -o bin/slackboard-cli slackboard-cli.go
+
+bin/slackboard-log: slackboard-log.go slackboard/*.go
+	gom build $(GOFLAGS) -o bin/slackboard-log slackboard-log.go
 
 fmt:
 	go fmt ./...

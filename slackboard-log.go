@@ -2,11 +2,10 @@ package main
 
 import (
 	"./slackboard"
-	"bytes"
 	"flag"
-	"io"
 	"log"
 	"os"
+	"os/exec"
 )
 
 func main() {
@@ -40,17 +39,20 @@ func main() {
 		hostname = "localhost"
 	}
 
-	var text bytes.Buffer
-	io.Copy(&text, os.Stdin)
-	payload := &slackboard.SlackboardPayload{
-		Tag:  *tag,
-		Host: hostname,
-		Text: text.String(),
-		Sync: *sync,
-	}
+	argv := flag.Args()
 
-	err = slackboard.SendNotification2Slackboard(*server, payload)
+	out, err := exec.Command(argv[0], argv[1:]...).CombinedOutput()
 	if err != nil {
-		log.Fatal(err.Error())
+		payload := &slackboard.SlackboardPayload{
+			Tag:  *tag,
+			Host: hostname,
+			Text: string(out),
+			Sync: *sync,
+		}
+
+		err = slackboard.SendNotification2Slackboard(*server, payload)
+		if err != nil {
+			log.Fatal(err.Error())
+		}
 	}
 }
