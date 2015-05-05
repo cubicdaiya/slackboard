@@ -3,9 +3,11 @@ package main
 import (
 	"./slackboard"
 	"flag"
+	"fmt"
 	"log"
 	"os"
 	"os/exec"
+	"strings"
 )
 
 func main() {
@@ -36,19 +38,30 @@ func main() {
 		log.Fatal("Specify slackboard tag name")
 	}
 
+	argv := flag.Args()
+
+	if len(argv) == 0 {
+		log.Fatal("command is not specified")
+	}
+
 	hostname, err := os.Hostname()
 	if err != nil {
 		hostname = "localhost"
 	}
 
-	argv := flag.Args()
-
 	out, err := exec.Command(argv[0], argv[1:]...).CombinedOutput()
 	if err != nil && *notify {
+		text := fmt.Sprintf(`
+Host   : %s
+Command: %s
+Output : %s
+Error  : %s
+`, hostname, strings.Join(argv, " "), string(out), err.Error())
+
 		payload := &slackboard.SlackboardPayload{
 			Tag:  *tag,
 			Host: hostname,
-			Text: string(out),
+			Text: text,
 			Sync: *sync,
 		}
 
