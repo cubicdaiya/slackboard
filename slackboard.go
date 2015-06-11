@@ -62,6 +62,7 @@ func main() {
 
 	statsGo.PrettyPrintEnabled()
 	http.HandleFunc("/notify", slackboard.NotifyHandler)
+	http.HandleFunc("/notify-directly", slackboard.NotifyDirectlyHandler)
 	http.HandleFunc("/app/config", slackboard.ConfigAppHandler)
 	http.HandleFunc("/stat/go", statsGo.Handler)
 	slackboard.SetupUI()

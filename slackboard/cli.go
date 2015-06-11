@@ -9,15 +9,10 @@ import (
 	"strings"
 )
 
-func SendNotification2Slackboard(server string, payload *SlackboardPayload) error {
-	body, err := json.Marshal(payload)
-	if err != nil {
-		return err
-	}
-
+func sendNotification2Slackboard(server, api, body string) error {
 	client := &http.Client{}
 
-	url := fmt.Sprintf("http://%s/notify", server)
+	url := fmt.Sprintf("http://%s/%s", server, api)
 	resp, err := client.Post(
 		url,
 		"application/json",
@@ -34,4 +29,22 @@ func SendNotification2Slackboard(server string, payload *SlackboardPayload) erro
 	}
 
 	return nil
+}
+
+func SendNotification2SlackboardDirectly(server string, payload *SlackboardDirectPayload) error {
+	body, err := json.Marshal(payload)
+	if err != nil {
+		return err
+	}
+
+	return sendNotification2Slackboard(server, "notify-directly", string(body))
+}
+
+func SendNotification2Slackboard(server string, payload *SlackboardPayload) error {
+	body, err := json.Marshal(payload)
+	if err != nil {
+		return err
+	}
+
+	return sendNotification2Slackboard(server, "notify", string(body))
 }

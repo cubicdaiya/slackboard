@@ -25,6 +25,11 @@ type SlackboardPayload struct {
 	Sync bool   `json:"sync,omitempty"`
 }
 
+type SlackboardDirectPayload struct {
+	Payload SlackPayload `json:"payload"`
+	Sync    bool         `json:"sync,omitempty"`
+}
+
 func sendNotification2Slack(payload *SlackPayload) error {
 	body, err := json.Marshal(payload)
 	if err != nil {
@@ -56,8 +61,13 @@ func NotifyHandler(w http.ResponseWriter, r *http.Request) {
 
 	LogError.Debug("parse request body")
 	var req SlackboardPayload
-	reqBody, _ := ioutil.ReadAll(r.Body)
-	err := json.Unmarshal(reqBody, &req)
+	reqBody, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		LogAcceptedRequest("/notify", r.Method, r.Proto, r.ContentLength, "")
+		sendResponse(w, "failed to read request-body", http.StatusInternalServerError)
+		return
+	}
+	err = json.Unmarshal(reqBody, &req)
 	if err != nil {
 		LogAcceptedRequest("/notify", r.Method, r.Proto, r.ContentLength, "")
 		sendResponse(w, "Request-body is malformed", http.StatusBadRequest)
@@ -117,4 +127,49 @@ func NotifyHandler(w http.ResponseWriter, r *http.Request) {
 	} else {
 		sendResponse(w, "ok", http.StatusOK)
 	}
+}
+
+func NotifyDirectlyHandler(w http.ResponseWriter, r *http.Request) {
+	LogError.Debug("notify-directly-request is Accepted")
+
+	LogError.Debug("parse request body")
+	var req SlackboardDirectPayload
+	reqBody, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		LogAcceptedRequest("/notify-directly", r.Method, r.Proto, r.ContentLength, "")
+		sendResponse(w, "failed to read request-body", http.StatusInternalServerError)
+		return
+	}
+	err = json.Unmarshal(reqBody, &req)
+	if err != nil {
+		LogAcceptedRequest("/notify-directly", r.Method, r.Proto, r.ContentLength, "")
+		sendResponse(w, "Request-body is malformed", http.StatusBadRequest)
+		return
+	}
+
+	LogAcceptedRequest("/notify-directly", r.Method, r.Proto, r.ContentLength, req.Payload.Channel)
+
+	LogError.Debug("method check")
+	if r.Method != "POST" {
+		sendResponse(w, "invalid method", http.StatusBadRequest)
+		return
+	}
+
+	if req.Sync {
+		err := sendNotification2Slack(&req.Payload)
+		if err != nil {
+			sendResponse(w, "failed to post message to slack", http.StatusBadGateway)
+			return
+		}
+	} else {
+		go func() {
+			err := sendNotification2Slack(&req.Payload)
+			if err != nil {
+				LogError.Error(fmt.Sprintf("failed to post message to slack:%s", err.Error()))
+			}
+		}()
+	}
+
+	LogError.Debug("response to client")
+	sendResponse(w, "ok", http.StatusOK)
 }
