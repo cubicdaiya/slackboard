@@ -45,6 +45,12 @@ slackboard -c conf/slackboard.toml
 echo message | slackboard-cli -t test -s slackboard-host:29800
 ```
 
+You can send a message to slack's channel directly.
+
+```
+echo message | slackboard-cli -c #random -s slackboard-host:29800
+```
+
 ### Synchronous notification with slackboard-cli
 
 From v0.3.0 `slackboard-cli` sends a notification-request to `slackboard` asynchronously by default.
