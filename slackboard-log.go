@@ -18,6 +18,10 @@ func main() {
 	sync := flag.Bool("sync", false, "enable synchronous notification")
 	notify := flag.Bool("notity", true, "enable notification to slackboard")
 	logfile := flag.String("log", "", "log-file path")
+	channel := flag.String("c", "", "slackboard channel name")
+	username := flag.String("u", "slackboard", "user name")
+	iconemoji := flag.String("i", ":clipboard:", "emoji icon")
+	parse := flag.String("p", "full", "parsing mode")
 	flag.Parse()
 
 	if *version {
@@ -34,8 +38,12 @@ func main() {
 		log.Fatal("Specify slackboard server name")
 	}
 
-	if *tag == "" {
-		log.Fatal("Specify slackboard tag name")
+	if *tag == "" && *channel == "" {
+		log.Fatal("Specify slackboard tag or channel name")
+	}
+
+	if *tag != "" && *channel != "" {
+		log.Fatal("Assigning with '-t' and '-c' at once is not allowed")
 	}
 
 	argv := flag.Args()
@@ -58,16 +66,35 @@ Output : %s
 Error  : %s
 `, hostname, strings.Join(argv, " "), string(out), err.Error())
 
-		payload := &slackboard.SlackboardPayload{
-			Tag:  *tag,
-			Host: hostname,
-			Text: text,
-			Sync: *sync,
-		}
+		if *tag != "" {
+			payload := &slackboard.SlackboardPayload{
+				Tag:  *tag,
+				Host: hostname,
+				Text: text,
+				Sync: *sync,
+			}
 
-		err = slackboard.SendNotification2Slackboard(*server, payload)
-		if err != nil {
-			log.Fatal(err.Error())
+			err = slackboard.SendNotification2Slackboard(*server, payload)
+			if err != nil {
+				log.Fatal(err.Error())
+			}
+		} else {
+			payloadSlack := slackboard.SlackPayload{
+				Channel:   *channel,
+				Username:  *username,
+				IconEmoji: *iconemoji,
+				Text:      text,
+				Parse:     *parse,
+			}
+			payloadDirectly := &slackboard.SlackboardDirectPayload{
+				Payload: payloadSlack,
+				Sync:    *sync,
+			}
+
+			err = slackboard.SendNotification2SlackboardDirectly(*server, payloadDirectly)
+			if err != nil {
+				log.Fatal(err.Error())
+			}
 		}
 	}
 
