@@ -16,7 +16,7 @@ func main() {
 	server := flag.String("s", "", "slackboard server name")
 	tag := flag.String("t", "", "slackboard tag name")
 	sync := flag.Bool("sync", false, "enable synchronous notification")
-	notify := flag.Bool("notity", true, "enable notification to slackboard")
+	notify := flag.Bool("notify", true, "enable notification to slackboard")
 	logfile := flag.String("log", "", "log-file path")
 	channel := flag.String("c", "", "slackboard channel name")
 	username := flag.String("u", "slackboard", "user name")
