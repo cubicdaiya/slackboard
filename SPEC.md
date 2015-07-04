@@ -1,6 +1,6 @@
 # Specification for Slackboard
 
-Slackboard is a board server for Slack. It accepts a HTTP request.
+Slackboard is a proxy server for Slack. It accepts a HTTP request.
 
 ## API
 
