@@ -69,7 +69,7 @@ It sends a notification to `slackboard` when the command after `--` failed.
 slackboard-log -s 127.0.0.1:29800 -t test -- some-command
 ```
 
-From v0.5.0, you can send a message to slack's channel directly.
+From `v0.5.0`, you can send a message to slack's channel directly.
 
 ```
 slackboard-log -s 127.0.0.1:29800 -c #random -- some-command
