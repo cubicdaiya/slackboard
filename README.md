@@ -53,7 +53,7 @@ echo message | slackboard-cli -c #random -s slackboard-host:29800
 
 ### Synchronous notification with slackboard-cli
 
-From v0.3.0 `slackboard-cli` sends a notification-request to `slackboard` asynchronously by default.
+From v0.3.0, `slackboard-cli` sends a notification-request to `slackboard` asynchronously by default.
 If you want to send a notification-request to `slackboard` synchronously, you may add the option `-sync` to `slackboard-cli`.
 
 ```
