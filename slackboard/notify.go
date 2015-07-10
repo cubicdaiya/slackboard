@@ -2,7 +2,6 @@ package slackboard
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -44,7 +43,7 @@ func sendNotification2Slack(payload *SlackPayload) error {
 		strings.NewReader(string(body)))
 
 	if resp.StatusCode != http.StatusOK {
-		return errors.New(fmt.Sprintf("Slack is not available:%s", resp.Status))
+		return fmt.Errorf("Slack is not available:%s", resp.Status)
 	}
 
 	if err != nil {
