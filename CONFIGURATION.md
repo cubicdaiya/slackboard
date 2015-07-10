@@ -2,7 +2,7 @@
 
 A configuration file format for Slackboard is [TOML](https://github.com/toml-lang/toml).
 
-A configuration for Gaurun has some sections. A example is [here](conf/slackboard.toml).
+A configuration for Slackboard has some sections. A example is [here](conf/slackboard.toml).
 
  * [Core Section](#core-section)
  * [Tag Section](#tag-section)
