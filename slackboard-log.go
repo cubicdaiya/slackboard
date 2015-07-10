@@ -76,7 +76,7 @@ Error  : %s
 
 			err = slackboard.SendNotification2Slackboard(*server, payload)
 			if err != nil {
-				log.Fatal(err.Error())
+				log.Fatal(err)
 			}
 		} else {
 			payloadSlack := slackboard.SlackPayload{
@@ -93,7 +93,7 @@ Error  : %s
 
 			err = slackboard.SendNotification2SlackboardDirectly(*server, payloadDirectly)
 			if err != nil {
-				log.Fatal(err.Error())
+				log.Fatal(err)
 			}
 		}
 	}
@@ -109,14 +109,14 @@ Error  : %s
 		}
 		file, err := os.OpenFile(*logfile, os.O_RDWR|os.O_APPEND, os.ModePerm)
 		if err != nil {
-			log.Fatal(err.Error())
+			log.Fatal(err)
 		}
 		defer file.Close()
 		file.WriteString(string(out))
 	} else {
 		file, err := os.Create(*logfile)
 		if err != nil {
-			log.Fatal(err.Error())
+			log.Fatal(err)
 		}
 		defer file.Close()
 		file.WriteString(string(out))

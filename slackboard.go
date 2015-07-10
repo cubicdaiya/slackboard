@@ -39,7 +39,7 @@ func main() {
 	slackboard.ConfSlackboard = slackboard.BuildDefaultConf()
 	err := slackboard.LoadConf(*confPath, &slackboard.ConfSlackboard)
 	if err != nil {
-		log.Fatal(err.Error())
+		log.Fatal(err)
 	}
 
 	// set logger
@@ -79,16 +79,16 @@ func main() {
 		if err == nil && (fi.Mode()&os.ModeSocket) == os.ModeSocket {
 			err := os.Remove(sockPath)
 			if err != nil {
-				log.Fatal("failed to remove " + sockPath)
+				log.Fatalf("failed to remove %s", sockPath)
 			}
 		}
 		l, err := net.Listen("unix", sockPath)
 		if err != nil {
-			log.Fatal("failed to listen: " + sockPath)
+			log.Fatalf("failed to listen: %s", sockPath)
 		}
 		http.Serve(l, nil)
 	}
 
-	log.Fatal("port parameter is invalid: " + slackboard.ConfSlackboard.Core.Port)
+	log.Fatalf("port parameter is invalid: %s", slackboard.ConfSlackboard.Core.Port)
 
 }

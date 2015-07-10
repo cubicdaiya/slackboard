@@ -62,7 +62,7 @@ func main() {
 
 		err = slackboard.SendNotification2Slackboard(*server, payload)
 		if err != nil {
-			log.Fatal(err.Error())
+			log.Fatal(err)
 		}
 
 		return
@@ -82,7 +82,7 @@ func main() {
 
 	err = slackboard.SendNotification2SlackboardDirectly(*server, payloadDirectly)
 	if err != nil {
-		log.Fatal(err.Error())
+		log.Fatal(err)
 	}
 
 }
