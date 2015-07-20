@@ -32,6 +32,10 @@ func sendNotification2Slackboard(server, api, body string) error {
 }
 
 func SendNotification2SlackboardDirectly(server string, payload *SlackboardDirectPayload) error {
+	if strings.Index(payload.Payload.Channel, "#") != 0 {
+		payload.Payload.Channel = "#" + payload.Payload.Channel
+	}
+
 	body, err := json.Marshal(payload)
 	if err != nil {
 		return err
