@@ -42,15 +42,15 @@ func sendNotification2Slack(payload *SlackPayload) error {
 		"application/json",
 		strings.NewReader(string(body)))
 
-	if resp.StatusCode != http.StatusOK {
-		return fmt.Errorf("Slack is not available:%s", resp.Status)
-	}
-
 	if err != nil {
 		return err
 	}
 
 	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return fmt.Errorf("Slack is not available:%s", resp.Status)
+	}
 
 	return nil
 }
