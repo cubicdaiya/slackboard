@@ -9,7 +9,7 @@ Slackboard is production ready.
 ## Features
 
  * `slackboard`
-  * A proxy server for slack
+  * A proxy server for Slack
  * `slackboard-cli`
   * A client for `slackboard`
  * `slackboard-log`
@@ -45,7 +45,7 @@ slackboard -c conf/slackboard.toml
 echo message | slackboard-cli -t test -s slackboard-host:29800
 ```
 
-From v0.5.0, you can send a message to slack's channel directly.
+From v0.5.0, you can send a message to Slack's channel directly.
 
 ```
 echo message | slackboard-cli -c random -s slackboard-host:29800
@@ -69,7 +69,7 @@ It sends a notification to `slackboard` when the command after `--` failed.
 slackboard-log -s 127.0.0.1:29800 -t test -- some-command
 ```
 
-From `v0.5.0`, you can send a message to slack's channel directly.
+From `v0.5.0`, you can send a message to Slack's channel directly.
 
 ```
 slackboard-log -s 127.0.0.1:29800 -c random -- some-command
