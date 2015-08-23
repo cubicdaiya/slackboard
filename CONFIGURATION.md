@@ -14,7 +14,7 @@ A configuration for Slackboard has some sections. A example is [here](conf/slack
 |name     |type  |description                    |default|note                                 |
 |---------|------|-------------------------------|-------|-------------------------------------|
 |port     |string|port number or unix socket path|29800  |e.g.)29800, unix:/tmp/slackboard.sock|
-|slack_url|string|web hook url for slack         |       |                                     |
+|slack_url|string|Incomming Webhook url for slack|       |                                     |
 
 ## Tag Section
 
