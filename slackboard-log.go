@@ -57,14 +57,18 @@ func main() {
 		hostname = "localhost"
 	}
 
-	out, err := exec.Command(argv[0], argv[1:]...).CombinedOutput()
-	if err != nil && *notify {
-		text := fmt.Sprintf(`
+	msgFmt := `
 Host   : %s
 Command: %s
 Output : %s
 Error  : %s
-`, hostname, strings.Join(argv, " "), string(out), err.Error())
+`
+
+	out, err := exec.Command(argv[0], argv[1:]...).CombinedOutput()
+	if err != nil && *notify {
+		text := fmt.Sprintf(msgFmt, hostname, strings.Join(argv, " "), strings.TrimRight(string(out), "\n"), strings.TrimRight(err.Error(), "\n"))
+
+		log.Println(text)
 
 		if *tag != "" {
 			payload := &slackboard.SlackboardPayload{
@@ -96,6 +100,9 @@ Error  : %s
 				log.Fatal(err)
 			}
 		}
+	} else if err != nil {
+		text := fmt.Sprintf(msgFmt, hostname, strings.Join(argv, " "), strings.TrimRight(string(out), "\n"), strings.TrimRight(err.Error(), "\n"))
+		log.Println(text)
 	}
 
 	if *logfile == "" {
