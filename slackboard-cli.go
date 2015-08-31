@@ -56,10 +56,10 @@ func main() {
 	if *tag != "" {
 
 		payload := &slackboard.SlackboardPayload{
-			Tag:  *tag,
-			Host: hostname,
-			Text: text.String(),
-			Sync: *sync,
+			Tag:   *tag,
+			Host:  hostname,
+			Text:  text.String(),
+			Sync:  *sync,
 			Level: *level,
 		}
 
@@ -78,12 +78,12 @@ func main() {
 		Text:      text.String(),
 		Parse:     *parse,
 	}
-	if(*color != "") {
+	if *color != "" {
 		payloadSlack.Text = ""
 		payloadSlack.Attachments = make([]slackboard.SlackPayloadAttachments, 1)
 		payloadSlack.Attachments[0] = slackboard.SlackPayloadAttachments{
 			Color: *color,
-			Text: text.String(),
+			Text:  text.String(),
 		}
 	}
 

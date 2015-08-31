@@ -28,26 +28,26 @@ type SlackPayloadAttachments struct {
 	TitleLink string `json:"title_link"`
 	Text      string `json:"text"`
 
-	Field    []SlackPayloadAttachmentsField `json:"fields"`
+	Field []SlackPayloadAttachmentsField `json:"fields"`
 
 	ImageUrl string `json:"image_url"`
 	ThumbUrl string `json:"thumb_url"`
 }
 
 type SlackPayload struct {
-	Channel   string `json:"channel"`
-	Username  string `json:"username,omitempty"`
-	IconEmoji string `json:"icon_emoji,omitempty"`
-	Text      string `json:"text"`
-	Parse     string `json:"parse,omitempty"`
+	Channel     string                    `json:"channel"`
+	Username    string                    `json:"username,omitempty"`
+	IconEmoji   string                    `json:"icon_emoji,omitempty"`
+	Text        string                    `json:"text"`
+	Parse       string                    `json:"parse,omitempty"`
 	Attachments []SlackPayloadAttachments `json:"attachments"`
 }
 
 type SlackboardPayload struct {
-	Tag  string `json:"tag"`
-	Host string `json:"host,omitempty"`
-	Text string `json:"text"`
-	Sync bool   `json:"sync,omitempty"`
+	Tag   string `json:"tag"`
+	Host  string `json:"host,omitempty"`
+	Text  string `json:"text"`
+	Sync  bool   `json:"sync,omitempty"`
 	Level string `json:"level"`
 }
 
@@ -121,7 +121,7 @@ func NotifyHandler(w http.ResponseWriter, r *http.Request) {
 				Parse:     tag.Parse,
 			}
 
-			levelToColorMap := map[string]string {
+			levelToColorMap := map[string]string{
 				"info": "#00ff00", // green
 				"warn": "#ffdd00", // yellow
 				"crit": "#ff0000", // red
@@ -131,7 +131,7 @@ func NotifyHandler(w http.ResponseWriter, r *http.Request) {
 				payload.Attachments = make([]SlackPayloadAttachments, 1)
 				payload.Attachments[0] = SlackPayloadAttachments{
 					Color: color,
-					Text: req.Text,
+					Text:  req.Text,
 				}
 			}
 
