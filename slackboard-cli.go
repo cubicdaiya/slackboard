@@ -19,6 +19,7 @@ func main() {
 	username := flag.String("u", "slackboard", "user name")
 	iconemoji := flag.String("i", ":clipboard:", "emoji icon")
 	parse := flag.String("p", "full", "parsing mode")
+	color := flag.String("C", "", "color")
 	flag.Parse()
 
 	if *version {
@@ -75,6 +76,15 @@ func main() {
 		Text:      text.String(),
 		Parse:     *parse,
 	}
+	if(*color != "") {
+		payloadSlack.Text = ""
+		payloadSlack.Attachments = make([]slackboard.SlackPayloadAttachments, 1)
+		payloadSlack.Attachments[0] = slackboard.SlackPayloadAttachments{
+			Color: *color,
+			Text: text.String(),
+		}
+	}
+
 	payloadDirectly := &slackboard.SlackboardDirectPayload{
 		Payload: payloadSlack,
 		Sync:    *sync,

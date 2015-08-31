@@ -9,12 +9,38 @@ import (
 	"sync/atomic"
 )
 
+type SlackPayloadAttachmentsField struct {
+	Title string `json:"title"`
+	Value string `json:"value"`
+	Short bool   `json:"short"`
+}
+
+type SlackPayloadAttachments struct {
+	Fallback string `json:"fallback"`
+	Color    string `json:"color"`
+	Pretext  string `json:"pretext"`
+
+	AuthorName string `json:"author_name"`
+	AuthorLink string `json:"author_link"`
+	AuthorIcon string `json:"author_icon"`
+
+	Title     string `json:"title"`
+	TitleLink string `json:"title_link"`
+	Text      string `json:"text"`
+
+	Field    []SlackPayloadAttachmentsField `json:"fields"`
+
+	ImageUrl string `json:"image_url"`
+	ThumbUrl string `json:"thumb_url"`
+}
+
 type SlackPayload struct {
 	Channel   string `json:"channel"`
 	Username  string `json:"username,omitempty"`
 	IconEmoji string `json:"icon_emoji,omitempty"`
 	Text      string `json:"text"`
 	Parse     string `json:"parse,omitempty"`
+	Attachments []SlackPayloadAttachments `json:"attachments"`
 }
 
 type SlackboardPayload struct {
