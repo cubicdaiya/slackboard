@@ -19,6 +19,7 @@ func main() {
 	username := flag.String("u", "slackboard", "user name")
 	iconemoji := flag.String("i", ":clipboard:", "emoji icon")
 	parse := flag.String("p", "full", "parsing mode")
+	level := flag.String("l", "message", "level")
 	color := flag.String("C", "", "color")
 	flag.Parse()
 
@@ -59,6 +60,7 @@ func main() {
 			Host: hostname,
 			Text: text.String(),
 			Sync: *sync,
+			Level: *level,
 		}
 
 		err = slackboard.SendNotification2Slackboard(*server, payload)

@@ -48,6 +48,7 @@ type SlackboardPayload struct {
 	Host string `json:"host,omitempty"`
 	Text string `json:"text"`
 	Sync bool   `json:"sync,omitempty"`
+	Level string `json:"level"`
 }
 
 type SlackboardDirectPayload struct {
@@ -118,6 +119,20 @@ func NotifyHandler(w http.ResponseWriter, r *http.Request) {
 				IconEmoji: tag.IconEmoji,
 				Text:      req.Text,
 				Parse:     tag.Parse,
+			}
+
+			levelToColorMap := map[string]string {
+				"info": "#00ff00", // green
+				"warn": "#ffdd00", // yellow
+				"crit": "#ff0000", // red
+			}
+			if color, ok := levelToColorMap[req.Level]; ok {
+				payload.Text = ""
+				payload.Attachments = make([]SlackPayloadAttachments, 1)
+				payload.Attachments[0] = SlackPayloadAttachments{
+					Color: color,
+					Text: req.Text,
+				}
 			}
 
 			if req.Sync {
