@@ -26,12 +26,14 @@ The following JSON is a request-body example.
 }
 ```
 
-|name|type  |description               |required|note          |
-|----|------|--------------------------|--------|--------------|
-|tag |string|tag for selecting channel |o       |              |
-|host|string|hostname(client)          |-       |              |
-|text|string|notification text         |o       |              |
-|sync|bool  |synchronous notification  |-       |default: false|
+|name |type  |description               |required|note            |
+|-----|------|--------------------------|--------|----------------|
+|tag  |string|tag for selecting channel |o       |                |
+|host |string|hostname(client)          |-       |                |
+|text |string|notification text         |o       |                |
+|level|string|message/info/warn/crit    |-       |default: message|
+|sync |bool  |synchronous notification  |-       |default: false  |
+
 
 
 The following JSON is a response-body example from Slackboard. In this case, a status is 200(OK).
@@ -57,21 +59,23 @@ The following JSON is a request-body example.
         "username": "slackboard",
         "icon_emoji": ":clipboard:",
         "text": "notification text",
-        "parse": "full"
+        "parse": "full",
+        "attachments": [...]
     },
     "sync": false
 }
 ```
 
-|name               |type  |description             |required|note                |
-|-------------------|------|------------------------|--------|--------------------|
-|payload            |object|payload object          |o       |                    |
-|payload.channel    |string|channel name            |o       |                    |
-|payload.username   |string|user name               |-       |default: slackboard |
-|payload.icon_emoji |string|icon emoji              |-       |default: :clipboard:|
-|payload.text       |string|notification text       |o       |                    |
-|payload.parse      |string|parsing mode            |-       |default: full       |
-|sync               |bool  |synchronous notification|-       |default: false      |
+|name               |type  |description             |required|note                                       |
+|-------------------|------|------------------------|--------|-------------------------------------------|
+|payload            |object|payload object          |o       |                                           |
+|payload.channel    |string|channel name            |o       |                                           |
+|payload.username   |string|user name               |-       |default: slackboard                        |
+|payload.icon_emoji |string|icon emoji              |-       |default: :clipboard:                       |
+|payload.text       |string|notification text       |o       |                                           |
+|payload.parse      |string|parsing mode            |-       |default: full                              |
+|payload.attachments|object|attachments             |-       |see https://api.slack.com/docs/attachments |
+|sync               |bool  |synchronous notification|-       |default: false                             |
 
 The following JSON is a response-body example from Slackboard. In this case, a status is 200(OK).
 
