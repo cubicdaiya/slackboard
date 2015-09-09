@@ -9,19 +9,46 @@ import (
 	"sync/atomic"
 )
 
-type SlackPayload struct {
-	Channel   string `json:"channel"`
-	Username  string `json:"username,omitempty"`
-	IconEmoji string `json:"icon_emoji,omitempty"`
+type SlackPayloadAttachmentsField struct {
+	Title string `json:"title"`
+	Value string `json:"value"`
+	Short bool   `json:"short"`
+}
+
+type SlackPayloadAttachments struct {
+	Fallback string `json:"fallback"`
+	Color    string `json:"color"`
+	Pretext  string `json:"pretext"`
+
+	AuthorName string `json:"author_name"`
+	AuthorLink string `json:"author_link"`
+	AuthorIcon string `json:"author_icon"`
+
+	Title     string `json:"title"`
+	TitleLink string `json:"title_link"`
 	Text      string `json:"text"`
-	Parse     string `json:"parse,omitempty"`
+
+	Field []SlackPayloadAttachmentsField `json:"fields"`
+
+	ImageUrl string `json:"image_url"`
+	ThumbUrl string `json:"thumb_url"`
+}
+
+type SlackPayload struct {
+	Channel     string                    `json:"channel"`
+	Username    string                    `json:"username,omitempty"`
+	IconEmoji   string                    `json:"icon_emoji,omitempty"`
+	Text        string                    `json:"text"`
+	Parse       string                    `json:"parse,omitempty"`
+	Attachments []SlackPayloadAttachments `json:"attachments"`
 }
 
 type SlackboardPayload struct {
-	Tag  string `json:"tag"`
-	Host string `json:"host,omitempty"`
-	Text string `json:"text"`
-	Sync bool   `json:"sync,omitempty"`
+	Tag   string `json:"tag"`
+	Host  string `json:"host,omitempty"`
+	Text  string `json:"text"`
+	Sync  bool   `json:"sync,omitempty"`
+	Level string `json:"level"`
 }
 
 type SlackboardDirectPayload struct {
@@ -92,6 +119,20 @@ func NotifyHandler(w http.ResponseWriter, r *http.Request) {
 				IconEmoji: tag.IconEmoji,
 				Text:      req.Text,
 				Parse:     tag.Parse,
+			}
+
+			levelToColorMap := map[string]string{
+				"info": "#00ff00", // green
+				"warn": "#ffdd00", // yellow
+				"crit": "#ff0000", // red
+			}
+			if color, ok := levelToColorMap[req.Level]; ok {
+				payload.Text = ""
+				payload.Attachments = make([]SlackPayloadAttachments, 1)
+				payload.Attachments[0] = SlackPayloadAttachments{
+					Color: color,
+					Text:  req.Text,
+				}
 			}
 
 			if req.Sync {
