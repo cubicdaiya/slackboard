@@ -62,6 +62,8 @@ echo warning     | slackboard-cli -c random -s slackboard-host:29800 -l warn
 echo critical    | slackboard-cli -c random -s slackboard-host:29800 -l crit
 ```
 
+![attachment-color](https://raw.githubusercontent.com/cubicdaiya/slackboard/master/img/attachments.png)
+
 ### Synchronous notification with slackboard-cli
 
 From v0.3.0, `slackboard-cli` sends a notification-request to `slackboard` asynchronously by default.
