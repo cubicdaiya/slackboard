@@ -51,6 +51,17 @@ From v0.5.0, you can send a message to Slack's channel directly.
 echo message | slackboard-cli -c random -s slackboard-host:29800
 ```
 
+## Attachments
+
+From v0.6.0, `slackboard` supports [Attachments](https://api.slack.com/docs/attachments) partially.
+For example, `slackboard-cli` can append color for message.
+
+```
+echo information | slackboard-cli -c random -s slackboard-host:29800 -l info
+echo warning     | slackboard-cli -c random -s slackboard-host:29800 -l warn
+echo critical    | slackboard-cli -c random -s slackboard-host:29800 -l crit
+```
+
 ### Synchronous notification with slackboard-cli
 
 From v0.3.0, `slackboard-cli` sends a notification-request to `slackboard` asynchronously by default.
