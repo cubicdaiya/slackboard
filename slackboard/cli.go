@@ -5,14 +5,37 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
+	"net"
 	"net/http"
 	"strings"
 )
 
-func sendNotification2Slackboard(server, api, body string) error {
-	client := &http.Client{}
+type UnixDial struct {
+	sockPath string
+}
 
-	url := fmt.Sprintf("http://%s/%s", server, api)
+func (u UnixDial) Dial(proto, addr string) (conn net.Conn, err error) {
+	return net.Dial("unix", u.sockPath)
+}
+
+func sendNotification2Slackboard(server, api, body string) error {
+	var client *http.Client
+	var url string
+
+	if strings.HasPrefix(server, "unix:/") {
+		// UNIX Socket
+		client = &http.Client{
+			Transport: &http.Transport{
+				Dial: (&UnixDial{sockPath: server[5:]}).Dial,
+			},
+		}
+		url = fmt.Sprintf("http://localhost/%s", api)
+	} else {
+		// TCP
+		client = &http.Client{}
+		url = fmt.Sprintf("http://%s/%s", server, api)
+	}
+
 	resp, err := client.Post(
 		url,
 		"application/json",
