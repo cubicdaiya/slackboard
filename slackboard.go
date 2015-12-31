@@ -9,7 +9,6 @@ import (
 	"net"
 	"net/http"
 	"os"
-	"runtime"
 	"strconv"
 	"strings"
 )
@@ -24,9 +23,6 @@ func main() {
 		slackboard.PrintVersion()
 		return
 	}
-
-	// Set concurrency
-	runtime.GOMAXPROCS(runtime.NumCPU())
 
 	// init logger
 	slackboard.LogAccess = logrus.New()
