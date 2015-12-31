@@ -25,12 +25,12 @@ func main() {
 
 	if *version {
 		slackboard.PrintVersion()
-		os.Exit(0)
+		return
 	}
 
 	if *server == "" && *tag == "" {
 		flag.PrintDefaults()
-		os.Exit(0)
+		return
 	}
 
 	if *server == "" {

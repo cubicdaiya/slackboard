@@ -22,7 +22,7 @@ func main() {
 
 	if *version {
 		slackboard.PrintVersion()
-		os.Exit(0)
+		return
 	}
 
 	// Set concurrency
