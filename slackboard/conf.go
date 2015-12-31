@@ -38,6 +38,10 @@ type SectionUI struct {
 	Root string `toml:"root"`
 }
 
+func init() {
+	ConfSlackboard = BuildDefaultConf()
+}
+
 func BuildDefaultConf() ConfToml {
 	var conf ConfToml
 	// Core

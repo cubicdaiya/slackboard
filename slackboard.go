@@ -3,14 +3,7 @@ package main
 import (
 	"./slackboard"
 	"flag"
-	"github.com/Sirupsen/logrus"
-	statsGo "github.com/fukata/golang-stats-api-handler"
 	"log"
-	"net"
-	"net/http"
-	"os"
-	"strconv"
-	"strings"
 )
 
 func main() {
@@ -24,15 +17,7 @@ func main() {
 		return
 	}
 
-	// init logger
-	slackboard.LogAccess = logrus.New()
-	slackboard.LogError = logrus.New()
-
-	slackboard.LogAccess.Formatter = new(slackboard.SlackboardFormatter)
-	slackboard.LogError.Formatter = new(slackboard.SlackboardFormatter)
-
 	// Load conf
-	slackboard.ConfSlackboard = slackboard.BuildDefaultConf()
 	err := slackboard.LoadConf(*confPath, &slackboard.ConfSlackboard)
 	if err != nil {
 		log.Fatal(err)
@@ -56,35 +41,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	statsGo.PrettyPrintEnabled()
-	http.HandleFunc("/notify", slackboard.NotifyHandler)
-	http.HandleFunc("/notify-directly", slackboard.NotifyDirectlyHandler)
-	http.HandleFunc("/app/config", slackboard.ConfigAppHandler)
-	http.HandleFunc("/stat/go", statsGo.Handler)
+	slackboard.RegisterAPIs()
 	slackboard.SetupUI()
-
-	// Listen TCP Port
-	if _, err := strconv.Atoi(slackboard.ConfSlackboard.Core.Port); err == nil {
-		http.ListenAndServe(":"+slackboard.ConfSlackboard.Core.Port, nil)
-	}
-
-	// Listen UNIX Socket
-	if strings.HasPrefix(slackboard.ConfSlackboard.Core.Port, "unix:/") {
-		sockPath := slackboard.ConfSlackboard.Core.Port[5:]
-		fi, err := os.Lstat(sockPath)
-		if err == nil && (fi.Mode()&os.ModeSocket) == os.ModeSocket {
-			err := os.Remove(sockPath)
-			if err != nil {
-				log.Fatalf("failed to remove %s", sockPath)
-			}
-		}
-		l, err := net.Listen("unix", sockPath)
-		if err != nil {
-			log.Fatalf("failed to listen: %s", sockPath)
-		}
-		http.Serve(l, nil)
-	}
-
-	log.Fatalf("port parameter is invalid: %s", slackboard.ConfSlackboard.Core.Port)
-
+	slackboard.Run()
 }

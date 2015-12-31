@@ -22,6 +22,15 @@ type LogReq struct {
 type SlackboardFormatter struct {
 }
 
+func init() {
+	// init logger
+	LogAccess = logrus.New()
+	LogError = logrus.New()
+	// init log formatter
+	LogAccess.Formatter = new(SlackboardFormatter)
+	LogError.Formatter = new(SlackboardFormatter)
+}
+
 func (f *SlackboardFormatter) Format(entry *logrus.Entry) ([]byte, error) {
 	b := &bytes.Buffer{}
 	fmt.Fprintf(b, "[%s] ", entry.Level.String())
