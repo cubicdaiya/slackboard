@@ -45,10 +45,20 @@ slackboard -c conf/slackboard.toml
 echo message | slackboard-cli -t test -s slackboard-host:29800
 ```
 
-From v0.5.0, you can send a message to Slack's channel directly.
+When `-t tagname` is given to `slackboard-cli`, `slackboard-cli` uses
+[POST /notify](https://github.com/cubicdaiya/slackboard/blob/master/SPEC.md#post-notify).
+In this case, `slackboard-cli` accepts the options such as `-l`, `-sync`.
+
+And you can send a message to Slack's channel directly from v0.5.0.
 
 ```
 echo message | slackboard-cli -c random -s slackboard-host:29800
+```
+
+When `-c channelname` is given to `slackboard-cli`, `slackboard-cli` uses [POST /notify-directly](https://github.com/cubicdaiya/slackboard/blob/master/SPEC.md#post-notify-directly). In this case, `slackboard-cli` accepts the all options except `-t` and `-l`.
+
+```
+echo message | slackboard-cli -c random -s slackboard-host:29800 -u username -i :icon_emoji: -C #ff00ff
 ```
 
 ## Attachments
