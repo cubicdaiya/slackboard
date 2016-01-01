@@ -47,7 +47,7 @@ echo message | slackboard-cli -t test -s slackboard-host:29800
 
 When `-t tagname` is given to `slackboard-cli`, `slackboard-cli` uses
 [POST /notify](https://github.com/cubicdaiya/slackboard/blob/master/SPEC.md#post-notify).
-In this case, `slackboard-cli` accepts the options such as `-l`, `-sync`.
+In this case, `slackboard-cli` accepts the options such as `-l`, `-sync`, `-title`.
 
 And you can send a message to Slack's channel directly from v0.5.0.
 

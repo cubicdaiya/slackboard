@@ -21,6 +21,7 @@ func main() {
 	parse := flag.String("p", "full", "parsing mode")
 	level := flag.String("l", "message", "level")
 	color := flag.String("C", "", "color")
+	title := flag.String("title", "", "title")
 	flag.Parse()
 
 	if *version {
@@ -61,6 +62,7 @@ func main() {
 			Text:  text.String(),
 			Sync:  *sync,
 			Level: *level,
+			Title: *title,
 		}
 
 		err = slackboard.SendNotification2Slackboard(*server, payload)
@@ -78,11 +80,13 @@ func main() {
 		Text:      text.String(),
 		Parse:     *parse,
 	}
-	if *color != "" {
+
+	if *color != "" || *title != "" {
 		payloadSlack.Text = ""
 		payloadSlack.Attachments = make([]slackboard.SlackPayloadAttachments, 1)
 		payloadSlack.Attachments[0] = slackboard.SlackPayloadAttachments{
 			Color: *color,
+			Title: *title,
 			Text:  text.String(),
 		}
 	}

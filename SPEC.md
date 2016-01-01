@@ -15,7 +15,7 @@ Slackboard has some APIs.
 
 Accepts a HTTP request for notification to Slack.
 
-The following JSON is a request-body example.
+The JSON below is a request-body example.
 
 ```json
 {
@@ -32,11 +32,12 @@ The following JSON is a request-body example.
 |host |string|hostname(client)          |-       |                |
 |text |string|notification text         |o       |                |
 |level|string|message/info/warn/crit    |-       |default: message|
+|title|string|message title             |-       |                |
 |sync |bool  |synchronous notification  |-       |default: false  |
 
 
 
-The following JSON is a response-body example from Slackboard. In this case, a status is 200(OK).
+The JSON below is a response-body example from Slackboard. In this case, a status is 200(OK).
 
 ```json
 {
@@ -50,7 +51,7 @@ When Slackboard receives an invalid request(for example, malformed body is inclu
 
 Accepts a HTTP request for notification to Slack.
 
-The following JSON is a request-body example.
+The JSON below is a request-body example.
 
 ```json
 {
@@ -77,7 +78,7 @@ The following JSON is a request-body example.
 |payload.attachments|object|attachments             |-       |see https://api.slack.com/docs/attachments |
 |sync               |bool  |synchronous notification|-       |default: false                             |
 
-The following JSON is a response-body example from Slackboard. In this case, a status is 200(OK).
+The JSON below is a response-body example from Slackboard. In this case, a status is 200(OK).
 
 ```json
 {
