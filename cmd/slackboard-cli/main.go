@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/cubicdaiya/slackboard/slackboard"
 	"bytes"
 	"flag"
+	"github.com/cubicdaiya/slackboard/slackboard"
 	"io"
 	"log"
 	"os"

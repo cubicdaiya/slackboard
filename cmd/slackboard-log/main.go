@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/cubicdaiya/slackboard/slackboard"
 	"flag"
 	"fmt"
+	"github.com/cubicdaiya/slackboard/slackboard"
 	"log"
 	"os"
 	"os/exec"
@@ -66,16 +66,21 @@ Error  : %s
 
 	out, err := exec.Command(argv[0], argv[1:]...).CombinedOutput()
 	if err != nil && *notify {
-		text := fmt.Sprintf(msgFmt, hostname, strings.Join(argv, " "), strings.TrimRight(string(out), "\n"), strings.TrimRight(err.Error(), "\n"))
+		text := fmt.Sprintf(msgFmt,
+			hostname,
+			strings.Join(argv, " "),
+			strings.TrimRight(string(out), "\n"),
+			strings.TrimRight(err.Error(), "\n"))
 
 		log.Println(text)
 
 		if *tag != "" {
 			payload := &slackboard.SlackboardPayload{
-				Tag:  *tag,
-				Host: hostname,
-				Text: text,
-				Sync: *sync,
+				Tag:   *tag,
+				Host:  hostname,
+				Text:  text,
+				Sync:  *sync,
+				Level: "crit",
 			}
 
 			err = slackboard.SendNotification2Slackboard(*server, payload)
@@ -89,6 +94,12 @@ Error  : %s
 				IconEmoji: *iconemoji,
 				Text:      text,
 				Parse:     *parse,
+			}
+			payloadSlack.Text = ""
+			payloadSlack.Attachments = make([]slackboard.SlackPayloadAttachments, 1)
+			payloadSlack.Attachments[0] = slackboard.SlackPayloadAttachments{
+				Color: "#ff0000",
+				Text:  text,
 			}
 			payloadDirectly := &slackboard.SlackboardDirectPayload{
 				Payload: payloadSlack,
