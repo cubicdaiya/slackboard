@@ -15,6 +15,12 @@ Slackboard is production ready.
  * `slackboard-log`
   * A client like [`cronlog`](https://github.com/kazuho/kaztools/blob/master/cronlog) for `slackboard`
 
+## Instalation
+
+```
+go get -u github.com/cubicdaiya/slackboard/...
+```
+
 ## Build
 
 ```
