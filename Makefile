@@ -7,14 +7,14 @@ gom:
 bundle:
 	gom install
 
-bin/slackboard: slackboard.go slackboard/*.go
-	gom build $(GOFLAGS) -o bin/slackboard slackboard.go
+bin/slackboard: cmd/slackboard/main.go slackboard/*.go
+	gom build $(GOFLAGS) -o bin/slackboard github.com/cubicdaiya/slackboard/cmd/slackboard
 
-bin/slackboard-cli: slackboard-cli.go slackboard/*.go
-	gom build $(GOFLAGS) -o bin/slackboard-cli slackboard-cli.go
+bin/slackboard-cli: cmd/slackboard-cli/main.go slackboard/*.go
+	gom build $(GOFLAGS) -o bin/slackboard-cli github.com/cubicdaiya/slackboard/cmd/slackboard-cli
 
-bin/slackboard-log: slackboard-log.go slackboard/*.go
-	gom build $(GOFLAGS) -o bin/slackboard-log slackboard-log.go
+bin/slackboard-log: cmd/slackboard-log/main.go slackboard/*.go
+	gom build $(GOFLAGS) -o bin/slackboard-log github.com/cubicdaiya/slackboard/cmd/slackboard-log
 
 fmt:
 	go fmt ./...
