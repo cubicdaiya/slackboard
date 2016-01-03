@@ -21,14 +21,6 @@ Slackboard is production ready.
 go get -u github.com/cubicdaiya/slackboard/...
 ```
 
-## Build
-
-```
-make gom
-make bundle
-make
-```
-
 ## Configuration
 
 See [CONFIGURATION.md](https://github.com/cubicdaiya/slackboard/blob/master/CONFIGURATION.md) about details.
