@@ -4,8 +4,9 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"github.com/BurntSushi/toml"
 	"net/http"
+
+	"github.com/BurntSushi/toml"
 )
 
 type ConfToml struct {

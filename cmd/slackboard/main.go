@@ -2,8 +2,9 @@ package main
 
 import (
 	"flag"
-	"github.com/cubicdaiya/slackboard/slackboard"
 	"log"
+
+	"github.com/cubicdaiya/slackboard/slackboard"
 )
 
 func main() {

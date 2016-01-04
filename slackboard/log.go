@@ -4,9 +4,10 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/Sirupsen/logrus"
 	"os"
 	"time"
+
+	"github.com/Sirupsen/logrus"
 )
 
 type LogReq struct {

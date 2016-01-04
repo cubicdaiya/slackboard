@@ -3,10 +3,11 @@ package main
 import (
 	"bytes"
 	"flag"
-	"github.com/cubicdaiya/slackboard/slackboard"
 	"io"
 	"log"
 	"os"
+
+	"github.com/cubicdaiya/slackboard/slackboard"
 )
 
 func main() {

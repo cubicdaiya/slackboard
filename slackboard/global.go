@@ -1,8 +1,9 @@
 package slackboard
 
 import (
-	"github.com/Sirupsen/logrus"
 	"html/template"
+
+	"github.com/Sirupsen/logrus"
 )
 
 var (

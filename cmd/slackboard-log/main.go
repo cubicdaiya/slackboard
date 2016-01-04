@@ -3,11 +3,12 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/cubicdaiya/slackboard/slackboard"
 	"log"
 	"os"
 	"os/exec"
 	"strings"
+
+	"github.com/cubicdaiya/slackboard/slackboard"
 )
 
 func main() {
