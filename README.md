@@ -65,12 +65,20 @@ From v0.6.0, `slackboard` supports [Attachments](https://api.slack.com/docs/atta
 For example, `slackboard-cli` can append color for message.
 
 ```
-echo information | slackboard-cli -c random -s slackboard-host:29800 -l info
-echo warning     | slackboard-cli -c random -s slackboard-host:29800 -l warn
-echo critical    | slackboard-cli -c random -s slackboard-host:29800 -l crit
+echo information | slackboard-cli -t test -s slackboard-host:29800 -l info
+echo warning     | slackboard-cli -t test -s slackboard-host:29800 -l warn
+echo critical    | slackboard-cli -t test -s slackboard-host:29800 -l crit
 ```
 
 ![attachment-color](https://raw.githubusercontent.com/cubicdaiya/slackboard/master/img/attachments.png)
+
+Or you can set color keywords or color-code of [Slack Attachments](https://api.slack.com/docs/attachments) with `-C` directly.
+
+```
+echo good    | slackboard-cli -c random -s slackboard-host:29800 -C good
+echo bad     | slackboard-cli -c random -s slackboard-host:29800 -C bad
+echo warning | slackboard-cli -c random -s slackboard-host:29800 -C warning
+```
 
 ### Synchronous notification with slackboard-cli
 
