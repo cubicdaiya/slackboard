@@ -30,6 +30,10 @@ func main() {
 		return
 	}
 
+	if *server == "" {
+		*server = os.Getenv("SLACKBOARD_SERVER")
+	}
+
 	if *server == "" && *tag == "" {
 		flag.PrintDefaults()
 		return
