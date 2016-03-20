@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"net/http"
 	"os"
 	"time"
 
@@ -13,6 +14,7 @@ import (
 type LogReq struct {
 	Type          string `json:"type"`
 	Time          string `json:"time"`
+	RemoteAddr    string `json:"remote_addr"`
 	URI           string `json:"uri"`
 	Method        string `json:"method"`
 	Proto         string `json:"proto"`
@@ -69,14 +71,15 @@ func SetLogLevel(log *logrus.Logger, levelString string) error {
 	return nil
 }
 
-func LogAcceptedRequest(uri, method, proto string, length int64, tag string) {
+func LogAcceptedRequest(r *http.Request, tag string) {
 	log := &LogReq{
 		Type:          "accepted-request",
 		Time:          time.Now().Format("2006/01/02 15:04:05 MST"),
-		URI:           uri,
-		Method:        method,
-		Proto:         proto,
-		ContentLength: length,
+		RemoteAddr:    r.RemoteAddr,
+		URI:           r.URL.Path,
+		Method:        r.Method,
+		Proto:         r.Proto,
+		ContentLength: r.ContentLength,
 		Tag:           tag,
 	}
 	logJSON, err := json.Marshal(log)

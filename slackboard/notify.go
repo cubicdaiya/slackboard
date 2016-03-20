@@ -90,18 +90,18 @@ func NotifyHandler(w http.ResponseWriter, r *http.Request) {
 	var req SlackboardPayload
 	reqBody, err := ioutil.ReadAll(r.Body)
 	if err != nil {
-		LogAcceptedRequest("/notify", r.Method, r.Proto, r.ContentLength, "")
+		LogAcceptedRequest(r, "")
 		sendResponse(w, "failed to read request-body", http.StatusInternalServerError)
 		return
 	}
 	err = json.Unmarshal(reqBody, &req)
 	if err != nil {
-		LogAcceptedRequest("/notify", r.Method, r.Proto, r.ContentLength, "")
+		LogAcceptedRequest(r, "")
 		sendResponse(w, "Request-body is malformed", http.StatusBadRequest)
 		return
 	}
 
-	LogAcceptedRequest("/notify", r.Method, r.Proto, r.ContentLength, req.Tag)
+	LogAcceptedRequest(r, req.Tag)
 
 	LogError.Debug("method check")
 	if r.Method != "POST" {
@@ -191,18 +191,18 @@ func NotifyDirectlyHandler(w http.ResponseWriter, r *http.Request) {
 	var req SlackboardDirectPayload
 	reqBody, err := ioutil.ReadAll(r.Body)
 	if err != nil {
-		LogAcceptedRequest("/notify-directly", r.Method, r.Proto, r.ContentLength, "")
+		LogAcceptedRequest(r, "")
 		sendResponse(w, "failed to read request-body", http.StatusInternalServerError)
 		return
 	}
 	err = json.Unmarshal(reqBody, &req)
 	if err != nil {
-		LogAcceptedRequest("/notify-directly", r.Method, r.Proto, r.ContentLength, "")
+		LogAcceptedRequest(r, "")
 		sendResponse(w, "Request-body is malformed", http.StatusBadRequest)
 		return
 	}
 
-	LogAcceptedRequest("/notify-directly", r.Method, r.Proto, r.ContentLength, req.Payload.Channel)
+	LogAcceptedRequest(r, req.Payload.Channel)
 
 	LogError.Debug("method check")
 	if r.Method != "POST" {
