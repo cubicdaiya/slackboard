@@ -86,6 +86,17 @@ func main() {
 		Parse:     *parse,
 	}
 
+	if *color == "" && *level != "" {
+		switch *level {
+		case "info":
+			*color = "#00ff00"
+		case "warn":
+			*color = "#ffdd00"
+		case "crit":
+			*color = "#ff0000"
+		}
+	}
+
 	if *color != "" || *title != "" {
 		payloadSlack.Text = ""
 		payloadSlack.Attachments = make([]slackboard.SlackPayloadAttachments, 1)
