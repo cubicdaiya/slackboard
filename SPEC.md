@@ -10,6 +10,7 @@ Slackboard has some APIs.
  * [POST /notify-directly](#post-notify-directly)
  * [GET /stat/go](#get-statgo)
  * [GET /config/app](#get-configapp)
+ * [GET /app/config](#get-configapp)
 
 ### POST /notify
 
@@ -95,3 +96,7 @@ Returns a statictics for golang-runtime. See [golang-stats-api-handler](https://
 ### GET /config/app
 
 Returns a current configuration for Slackboard.
+
+### GET /app/config (deprecated)
+
+Returns a current configuration for Slackboard. This API is deprecated.

@@ -19,6 +19,7 @@ func RegisterAPIs() {
 	http.HandleFunc("/notify", NotifyHandler)
 	http.HandleFunc("/notify-directly", NotifyDirectlyHandler)
 	http.HandleFunc("/config/app", ConfigAppHandler)
+	http.HandleFunc("/app/config", ConfigAppHandler)
 	http.HandleFunc("/stat/go", statsGo.Handler)
 }
 
