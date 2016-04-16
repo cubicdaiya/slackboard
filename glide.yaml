@@ -1,0 +1,8 @@
+package: github.com/cubicdaiya/slackboard
+import:
+- package: github.com/BurntSushi/toml
+  version: v0.2.0
+- package: github.com/Sirupsen/logrus
+  version: v0.10.0
+- package: github.com/fukata/golang-stats-api-handler
+  version: ab9f90f16caab828afda479fd34bfbbbba2efcee

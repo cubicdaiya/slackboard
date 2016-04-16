@@ -1,4 +1,5 @@
 .vendor
+vendor
 bin/slackboard
 bin/slackboard-cli
 bin/slackboard-log
