@@ -6,13 +6,13 @@ bundle:
 	glide install
 
 bin/slackboard: cmd/slackboard/slackboard.go slackboard/*.go
-	go build $(GOFLAGS) -o bin/slackboard github.com/cubicdaiya/slackboard/cmd/slackboard
+	GO15VENDOREXPERIMENT=1 go build $(GOFLAGS) -o bin/slackboard github.com/cubicdaiya/slackboard/cmd/slackboard
 
 bin/slackboard-cli: cmd/slackboard-cli/slackboard-cli.go slackboard/*.go
-	go build $(GOFLAGS) -o bin/slackboard-cli github.com/cubicdaiya/slackboard/cmd/slackboard-cli
+	GO15VENDOREXPERIMENT=1 go build $(GOFLAGS) -o bin/slackboard-cli github.com/cubicdaiya/slackboard/cmd/slackboard-cli
 
 bin/slackboard-log: cmd/slackboard-log/slackboard-log.go slackboard/*.go
-	go build $(GOFLAGS) -o bin/slackboard-log github.com/cubicdaiya/slackboard/cmd/slackboard-log
+	GO15VENDOREXPERIMENT=1 go build $(GOFLAGS) -o bin/slackboard-log github.com/cubicdaiya/slackboard/cmd/slackboard-log
 
 fmt:
 	@echo $(TARGETS_NOVENDOR) | xargs go fmt
