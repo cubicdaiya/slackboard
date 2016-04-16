@@ -1,3 +1,4 @@
+TARGETS_NOVENDOR=$(shell glide novendor)
 
 all: bin/slackboard bin/slackboard-cli bin/slackboard-log
 
@@ -14,7 +15,7 @@ bin/slackboard-log: cmd/slackboard-log/slackboard-log.go slackboard/*.go
 	go build $(GOFLAGS) -o bin/slackboard-log github.com/cubicdaiya/slackboard/cmd/slackboard-log
 
 fmt:
-	go fmt ./...
+	@echo $(TARGETS_NOVENDOR) | xargs go fmt
 
 clean:
 	rm -rf bin/slackboard*
