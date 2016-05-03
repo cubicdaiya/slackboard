@@ -63,7 +63,7 @@ func sendNotification2Slack(payload *SlackPayload) error {
 		return err
 	}
 
-	client := &http.Client{}
+	client := http.DefaultClient
 
 	resp, err := client.Post(
 		ConfSlackboard.Core.SlackURL,
