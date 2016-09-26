@@ -5,6 +5,7 @@ import (
 	"html/template"
 	"net/http"
 	"os"
+	"path/filepath"
 )
 
 type Topic struct {
@@ -15,8 +16,7 @@ type Topic struct {
 func SetupUI() {
 	root := ConfSlackboard.UI.Root
 	index := fmt.Sprintf("%s/index.html", root)
-	_, err := os.Stat(index)
-	if err != nil {
+	if _, err := os.Stat(filepath.Join(root, "index.html")); err != nil {
 		LogError.Warn(fmt.Sprintf("%s is not found", index))
 		return
 	}
