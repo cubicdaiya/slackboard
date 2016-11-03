@@ -13,7 +13,6 @@ type ConfToml struct {
 	Core SectionCore  `toml:"core"`
 	Tags []SectionTag `toml:"tags"`
 	Log  SectionLog   `toml:"log"`
-	UI   SectionUI    `toml:"ui"`
 }
 
 type SectionCore struct {
@@ -33,10 +32,6 @@ type SectionLog struct {
 	AccessLog string `toml:"access_log"`
 	ErrorLog  string `toml:"error_log"`
 	Level     string `toml:"level"`
-}
-
-type SectionUI struct {
-	Root string `toml:"root"`
 }
 
 func init() {

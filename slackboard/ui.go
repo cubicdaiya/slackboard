@@ -16,10 +16,8 @@ type Topic struct {
 }
 
 func SetupUI() {
-	root := ConfSlackboard.UI.Root
-	index := fmt.Sprintf("%s/index.html", root)
-
-	bs, err := Asset("ui/index.html")
+	index := "ui/index.html"
+	bs, err := Asset(index)
 	if err != nil {
 		LogError.Warn(fmt.Sprintf("%s is not found", index))
 		return
