@@ -7,10 +7,7 @@ import (
 	"io"
 	"mime"
 	"net/http"
-	"os"
 	"path"
-	"path/filepath"
-	_ "strings"
 )
 
 type Topic struct {
@@ -21,10 +18,6 @@ type Topic struct {
 func SetupUI() {
 	root := ConfSlackboard.UI.Root
 	index := fmt.Sprintf("%s/index.html", root)
-	if _, err := os.Stat(filepath.Join(root, "index.html")); err != nil {
-		LogError.Warn(fmt.Sprintf("%s is not found", index))
-		return
-	}
 
 	bs, err := Asset("ui/index.html")
 	if err != nil {
