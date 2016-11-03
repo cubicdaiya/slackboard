@@ -7,6 +7,7 @@ bundle:
 
 bindata:
 	go-bindata -pkg slackboard ./ui/* && mv bindata.go slackboard/
+	go fmt slackboard/bindata.go
 
 bin/slackboard: cmd/slackboard/slackboard.go slackboard/*.go bindata
 	GO15VENDOREXPERIMENT=1 go build $(GOFLAGS) -o bin/slackboard cmd/slackboard/slackboard.go

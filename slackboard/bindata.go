@@ -434,21 +434,21 @@ func AssetNames() []string {
 
 // _bindata is a table, holding each asset generator, mapped to its name.
 var _bindata = map[string]func() (*asset, error){
-	"ui/css/bootstrap-theme.css": uiCssBootstrapThemeCss,
-	"ui/css/bootstrap-theme.css.map": uiCssBootstrapThemeCssMap,
-	"ui/css/bootstrap-theme.min.css": uiCssBootstrapThemeMinCss,
-	"ui/css/bootstrap.css": uiCssBootstrapCss,
-	"ui/css/bootstrap.css.map": uiCssBootstrapCssMap,
-	"ui/css/bootstrap.min.css": uiCssBootstrapMinCss,
-	"ui/fonts/glyphicons-halflings-regular.eot": uiFontsGlyphiconsHalflingsRegularEot,
-	"ui/fonts/glyphicons-halflings-regular.svg": uiFontsGlyphiconsHalflingsRegularSvg,
-	"ui/fonts/glyphicons-halflings-regular.ttf": uiFontsGlyphiconsHalflingsRegularTtf,
+	"ui/css/bootstrap-theme.css":                 uiCssBootstrapThemeCss,
+	"ui/css/bootstrap-theme.css.map":             uiCssBootstrapThemeCssMap,
+	"ui/css/bootstrap-theme.min.css":             uiCssBootstrapThemeMinCss,
+	"ui/css/bootstrap.css":                       uiCssBootstrapCss,
+	"ui/css/bootstrap.css.map":                   uiCssBootstrapCssMap,
+	"ui/css/bootstrap.min.css":                   uiCssBootstrapMinCss,
+	"ui/fonts/glyphicons-halflings-regular.eot":  uiFontsGlyphiconsHalflingsRegularEot,
+	"ui/fonts/glyphicons-halflings-regular.svg":  uiFontsGlyphiconsHalflingsRegularSvg,
+	"ui/fonts/glyphicons-halflings-regular.ttf":  uiFontsGlyphiconsHalflingsRegularTtf,
 	"ui/fonts/glyphicons-halflings-regular.woff": uiFontsGlyphiconsHalflingsRegularWoff,
-	"ui/index.html": uiIndexHtml,
-	"ui/js/bootstrap.js": uiJsBootstrapJs,
-	"ui/js/bootstrap.min.js": uiJsBootstrapMinJs,
-	"ui/js/jquery-1.11.2.min.js": uiJsJquery1112MinJs,
-	"ui/js/npm.js": uiJsNpmJs,
+	"ui/index.html":                              uiIndexHtml,
+	"ui/js/bootstrap.js":                         uiJsBootstrapJs,
+	"ui/js/bootstrap.min.js":                     uiJsBootstrapMinJs,
+	"ui/js/jquery-1.11.2.min.js":                 uiJsJquery1112MinJs,
+	"ui/js/npm.js":                               uiJsNpmJs,
 }
 
 // AssetDir returns the file names below a certain
@@ -490,28 +490,29 @@ type bintree struct {
 	Func     func() (*asset, error)
 	Children map[string]*bintree
 }
+
 var _bintree = &bintree{nil, map[string]*bintree{
 	"ui": &bintree{nil, map[string]*bintree{
 		"css": &bintree{nil, map[string]*bintree{
-			"bootstrap-theme.css": &bintree{uiCssBootstrapThemeCss, map[string]*bintree{}},
+			"bootstrap-theme.css":     &bintree{uiCssBootstrapThemeCss, map[string]*bintree{}},
 			"bootstrap-theme.css.map": &bintree{uiCssBootstrapThemeCssMap, map[string]*bintree{}},
 			"bootstrap-theme.min.css": &bintree{uiCssBootstrapThemeMinCss, map[string]*bintree{}},
-			"bootstrap.css": &bintree{uiCssBootstrapCss, map[string]*bintree{}},
-			"bootstrap.css.map": &bintree{uiCssBootstrapCssMap, map[string]*bintree{}},
-			"bootstrap.min.css": &bintree{uiCssBootstrapMinCss, map[string]*bintree{}},
+			"bootstrap.css":           &bintree{uiCssBootstrapCss, map[string]*bintree{}},
+			"bootstrap.css.map":       &bintree{uiCssBootstrapCssMap, map[string]*bintree{}},
+			"bootstrap.min.css":       &bintree{uiCssBootstrapMinCss, map[string]*bintree{}},
 		}},
 		"fonts": &bintree{nil, map[string]*bintree{
-			"glyphicons-halflings-regular.eot": &bintree{uiFontsGlyphiconsHalflingsRegularEot, map[string]*bintree{}},
-			"glyphicons-halflings-regular.svg": &bintree{uiFontsGlyphiconsHalflingsRegularSvg, map[string]*bintree{}},
-			"glyphicons-halflings-regular.ttf": &bintree{uiFontsGlyphiconsHalflingsRegularTtf, map[string]*bintree{}},
+			"glyphicons-halflings-regular.eot":  &bintree{uiFontsGlyphiconsHalflingsRegularEot, map[string]*bintree{}},
+			"glyphicons-halflings-regular.svg":  &bintree{uiFontsGlyphiconsHalflingsRegularSvg, map[string]*bintree{}},
+			"glyphicons-halflings-regular.ttf":  &bintree{uiFontsGlyphiconsHalflingsRegularTtf, map[string]*bintree{}},
 			"glyphicons-halflings-regular.woff": &bintree{uiFontsGlyphiconsHalflingsRegularWoff, map[string]*bintree{}},
 		}},
 		"index.html": &bintree{uiIndexHtml, map[string]*bintree{}},
 		"js": &bintree{nil, map[string]*bintree{
-			"bootstrap.js": &bintree{uiJsBootstrapJs, map[string]*bintree{}},
-			"bootstrap.min.js": &bintree{uiJsBootstrapMinJs, map[string]*bintree{}},
+			"bootstrap.js":         &bintree{uiJsBootstrapJs, map[string]*bintree{}},
+			"bootstrap.min.js":     &bintree{uiJsBootstrapMinJs, map[string]*bintree{}},
 			"jquery-1.11.2.min.js": &bintree{uiJsJquery1112MinJs, map[string]*bintree{}},
-			"npm.js": &bintree{uiJsNpmJs, map[string]*bintree{}},
+			"npm.js":               &bintree{uiJsNpmJs, map[string]*bintree{}},
 		}},
 	}},
 }}
@@ -562,4 +563,3 @@ func _filePath(dir, name string) string {
 	cannonicalName := strings.Replace(name, "\\", "/", -1)
 	return filepath.Join(append([]string{dir}, strings.Split(cannonicalName, "/")...)...)
 }
-
