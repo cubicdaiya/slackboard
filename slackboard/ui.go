@@ -1,11 +1,13 @@
 package slackboard
 
 import (
+	"bytes"
 	"fmt"
 	"html/template"
+	"io"
+	"mime"
 	"net/http"
-	"os"
-	"path/filepath"
+	"path"
 )
 
 type Topic struct {
@@ -14,25 +16,47 @@ type Topic struct {
 }
 
 func SetupUI() {
-	root := ConfSlackboard.UI.Root
-	index := fmt.Sprintf("%s/index.html", root)
-	if _, err := os.Stat(filepath.Join(root, "index.html")); err != nil {
+	index := "ui/index.html"
+	bs, err := Asset(index)
+	if err != nil {
 		LogError.Warn(fmt.Sprintf("%s is not found", index))
 		return
 	}
 
-	IndexTemplate = template.Must(template.ParseFiles(index))
+	IndexTemplate = template.New("index")
+	IndexTemplate, err = IndexTemplate.Parse(string(bs))
+	if err != nil {
+		LogError.Warn(fmt.Sprintf("template: %s could not be parsed", index))
+		return
+	}
 
-	http.HandleFunc("/ui", UIHandler)
-	cssDir := fmt.Sprintf("%s/css", root)
-	jsDir := fmt.Sprintf("%s/js", root)
-	http.Handle("/css/", http.StripPrefix("/css/", http.FileServer(http.Dir(cssDir))))
-	http.Handle("/js/", http.StripPrefix("/js/", http.FileServer(http.Dir(jsDir))))
+	http.HandleFunc("/ui/", UIHandler)
 }
 
 func UIHandler(w http.ResponseWriter, r *http.Request) {
 	LogAcceptedRequest(r, "")
-	w.Header().Set("Content-Type", "text/html")
 	w.Header().Set("Server", fmt.Sprintf("slackboard/%s", Version))
-	IndexTemplate.Execute(w, Topics)
+
+	p := r.URL.Path
+	switch p {
+	case "/ui/":
+		fallthrough
+	case "/ui/index.html":
+		w.Header().Set("Content-Type", "text/html")
+		IndexTemplate.Execute(w, Topics)
+	default:
+		bs, err := Asset(p[1:])
+		if err != nil {
+			http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
+			return
+		}
+		ctype := mime.TypeByExtension(path.Ext(p))
+		if ctype != "" {
+			w.Header().Set("Content-Type", ctype)
+		} else {
+			w.Header().Set("Content-Type", "text/plain")
+		}
+		io.Copy(w, bytes.NewBuffer(bs))
+	}
+
 }
