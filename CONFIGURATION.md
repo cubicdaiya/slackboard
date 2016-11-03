@@ -7,7 +7,6 @@ A configuration for Slackboard has some sections. A example is [here](conf/slack
  * [Core Section](#core-section)
  * [Tag Section](#tag-section)
  * [Log Section](#log-section)
- * [UI Section](#ui-section)
 
 ## Core Section
 
@@ -35,9 +34,3 @@ A configuration for Slackboard has some sections. A example is [here](conf/slack
 |level     |string|log level      |error  |panic,fatal,error,warn,info,debug|
 
 `access_log` and `error_log` are allowed to give not only file-path but `stdout` and `stderr`.
-
-## UI Section
-
-|name|type  |description                  |default|note|
-|----|------|-----------------------------|-------|----|
-|root|string|document root path for Web UI|       |    |
