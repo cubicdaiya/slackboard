@@ -10,13 +10,13 @@ bindata:
 	go fmt slackboard/bindata.go
 
 bin/slackboard: cmd/slackboard/slackboard.go slackboard/*.go
-	GO15VENDOREXPERIMENT=1 go build $(GOFLAGS) -o bin/slackboard cmd/slackboard/slackboard.go
+	go build $(GOFLAGS) -o bin/slackboard cmd/slackboard/slackboard.go
 
 bin/slackboard-cli: cmd/slackboard-cli/slackboard-cli.go slackboard/*.go
-	GO15VENDOREXPERIMENT=1 go build $(GOFLAGS) -o bin/slackboard-cli cmd/slackboard-cli/slackboard-cli.go
+	go build $(GOFLAGS) -o bin/slackboard-cli cmd/slackboard-cli/slackboard-cli.go
 
 bin/slackboard-log: cmd/slackboard-log/slackboard-log.go slackboard/*.go
-	GO15VENDOREXPERIMENT=1 go build $(GOFLAGS) -o bin/slackboard-log cmd/slackboard-log/slackboard-log.go
+	go build $(GOFLAGS) -o bin/slackboard-log cmd/slackboard-log/slackboard-log.go
 
 fmt:
 	@echo $(TARGETS_NOVENDOR) | xargs go fmt
