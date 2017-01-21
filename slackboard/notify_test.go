@@ -160,6 +160,115 @@ func TestNotifyDirectlyHandlerSlackServerError(t *testing.T) {
 	}
 }
 
+func TestNotifyDirectlyHandlerQPS(t *testing.T) {
+	// setup a mock slack server
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprint(w, "ok")
+	}))
+	defer ts.Close()
+	ConfSlackboard.Core.SlackURL = ts.URL
+
+	inJSONStr := `{
+        "payload": {
+            "channel": "random",
+            "username": "slackboard",
+            "icon_emoji": ":clipboard:",
+            "text": "notification text",
+            "parse": "full"
+        },
+        "sync": true
+    }`
+
+	var testData = []struct {
+		in  int
+		out map[string]interface{}
+	}{
+		{
+			0,
+			map[string]interface{}{
+				"code": http.StatusOK,
+				"body": `{"message":"ok"}`,
+			},
+		},
+		{
+			1,
+			map[string]interface{}{
+				"code": http.StatusBadGateway,
+				"body": `{"message":"failed to post message to slack"}`,
+			},
+		},
+		{
+			2,
+			map[string]interface{}{
+				"code": http.StatusOK,
+				"body": `{"message":"ok"}`,
+			},
+		},
+	}
+
+	for _, tt := range testData {
+		// setup a qpsend
+		ConfSlackboard.Core.QPS = tt.in
+		QPSEnd = NewQPSPerSlackEndpoint(ConfSlackboard)
+
+		// setup a test client
+		ch := make(chan *httptest.ResponseRecorder)
+		qcount := 2
+		for i := 0; i < qcount; i++ {
+			go func() {
+				req, err := http.NewRequest(
+					"POST",
+					"/notify-directly",
+					bytes.NewBuffer([]byte(inJSONStr)),
+				)
+				if err != nil {
+					t.Fatal(err)
+				}
+
+				rr := httptest.NewRecorder()
+				handler := http.HandlerFunc(NotifyDirectlyHandler)
+				handler.ServeHTTP(rr, req)
+				ch <- rr
+			}()
+		}
+
+		// check a response
+		for i := 0; i < qcount; i++ {
+			rr := <-ch
+			if i == 1 {
+				// always ok
+				if status := rr.Code; status != http.StatusOK {
+					t.Errorf("status code: got %v want %v", status, http.StatusOK)
+				}
+
+				expected := `{"message":"ok"}`
+				jsonIsEqual, err := jsonBytesEqual(rr.Body.Bytes(), []byte(expected))
+				if err != nil {
+					t.Fatal(err)
+				}
+				if !jsonIsEqual {
+					t.Errorf("unexpected body: got %v want %v", rr.Body.String(), expected)
+				}
+			} else {
+				// depending on a qps setting
+				expectedCode := tt.out["code"].(int)
+				if status := rr.Code; status != expectedCode {
+					t.Errorf("status code: got %v want %v", status, expectedCode)
+				}
+
+				expectedBody := tt.out["body"].(string)
+				jsonIsEqual, err := jsonBytesEqual(rr.Body.Bytes(), []byte(expectedBody))
+				if err != nil {
+					t.Fatal(err)
+				}
+				if !jsonIsEqual {
+					t.Errorf("unexpected body: got %v want %v", rr.Body.String(), expectedBody)
+				}
+			}
+		}
+	}
+}
+
 func jsonBytesEqual(a, b []byte) (bool, error) {
 	var j, j2 interface{}
 	if err := json.Unmarshal(a, &j); err != nil {

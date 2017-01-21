@@ -18,6 +18,7 @@ type ConfToml struct {
 type SectionCore struct {
 	Port     string `toml:"port"`
 	SlackURL string `toml:"slack_url"`
+	QPS      int    `toml:"qps"`
 }
 
 type SectionTag struct {
@@ -43,6 +44,7 @@ func BuildDefaultConf() ConfToml {
 	// Core
 	conf.Core.Port = "29800"
 	conf.Core.SlackURL = ""
+	conf.Core.QPS = 0
 	// Log
 	conf.Log.AccessLog = "stdout"
 	conf.Log.ErrorLog = "stderr"

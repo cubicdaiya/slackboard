@@ -58,6 +58,10 @@ type SlackboardDirectPayload struct {
 }
 
 func sendNotification2Slack(payload *SlackPayload) error {
+	if QPSEnd != nil && !QPSEnd.Available() {
+		return fmt.Errorf("QPS ratelimit error")
+	}
+
 	body, err := json.Marshal(payload)
 	if err != nil {
 		return err

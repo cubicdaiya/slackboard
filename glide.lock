@@ -1,14 +1,16 @@
-hash: 70a72c6dbf4d69d2c62c1df014b0a92fb0e0530d54856859cbcb52c63259b539
-updated: 2016-04-16T23:04:26.872771715+09:00
+hash: 18036bc620c06ac2b8b7fbfe8cd58bacc53f52fd6dea32ab3f50f095fe7b6e40
+updated: 2017-01-21T23:33:40.431032489+09:00
 imports:
 - name: github.com/BurntSushi/toml
   version: bbd5bb678321a0d6e58f1099321dfa73391c1b6f
 - name: github.com/fukata/golang-stats-api-handler
   version: ab9f90f16caab828afda479fd34bfbbbba2efcee
+- name: github.com/juju/ratelimit
+  version: 77ed1c8a01217656d2080ad51981f6e99adaa177
 - name: github.com/Sirupsen/logrus
   version: 4b6ea7319e214d98c938f12692336f7ca9348d6b
 - name: golang.org/x/sys
   version: f64b50fbea64174967a8882830d621a18ee1548e
   subpackages:
   - unix
-devImports: []
+testImports: []

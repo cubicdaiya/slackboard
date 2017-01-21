@@ -14,6 +14,7 @@ A configuration for Slackboard has some sections. A example is [here](conf/slack
 |---------|------|-------------------------------|-------|-------------------------------------|
 |port     |string|port number or unix socket path|29800  |e.g.)29800, unix:/tmp/slackboard.sock|
 |slack_url|string|Incomming Webhook url for slack|       |                                     |
+|qps      |int   |Queries to slack Per Second    |0      |0 means unlimited. See also [slack api docs](https://api.slack.com/docs/rate-limits) |
 
 ## Tag Section
 
