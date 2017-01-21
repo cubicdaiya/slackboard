@@ -57,14 +57,14 @@ type SlackboardDirectPayload struct {
 	Sync    bool         `json:"sync,omitempty"`
 }
 
-func sendNotification2Slack(payload *SlackPayload) error {
+func sendNotification2Slack(payload *SlackPayload) (int, error) {
 	if QPSEnd != nil && !QPSEnd.Available() {
-		return fmt.Errorf("QPS ratelimit error")
+		return http.StatusTooManyRequests, fmt.Errorf("QPS ratelimit error")
 	}
 
 	body, err := json.Marshal(payload)
 	if err != nil {
-		return err
+		return http.StatusBadGateway, err
 	}
 
 	client := http.DefaultClient
@@ -75,16 +75,16 @@ func sendNotification2Slack(payload *SlackPayload) error {
 		strings.NewReader(string(body)))
 
 	if err != nil {
-		return err
+		return http.StatusBadGateway, err
 	}
 
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return fmt.Errorf("Slack is not available:%s", resp.Status)
+		return http.StatusBadGateway, fmt.Errorf("Slack is not available:%s", resp.Status)
 	}
 
-	return nil
+	return http.StatusOK, nil
 }
 
 func NotifyHandler(w http.ResponseWriter, r *http.Request) {
@@ -155,15 +155,15 @@ func NotifyHandler(w http.ResponseWriter, r *http.Request) {
 			}
 
 			if req.Sync {
-				err := sendNotification2Slack(payload)
+				status, err := sendNotification2Slack(payload)
 				if err != nil {
-					sendResponse(w, "failed to post message to slack", http.StatusBadGateway)
+					sendResponse(w, "failed to post message to slack", status)
 					return
 				}
 				sent = true
 			} else {
 				go func() {
-					err := sendNotification2Slack(payload)
+					_, err := sendNotification2Slack(payload)
 					if err != nil {
 						LogError.Error(fmt.Sprintf("failed to post message to slack:%s", err.Error()))
 					}
@@ -215,14 +215,14 @@ func NotifyDirectlyHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if req.Sync {
-		err := sendNotification2Slack(&req.Payload)
+		status, err := sendNotification2Slack(&req.Payload)
 		if err != nil {
-			sendResponse(w, "failed to post message to slack", http.StatusBadGateway)
+			sendResponse(w, "failed to post message to slack", status)
 			return
 		}
 	} else {
 		go func() {
-			err := sendNotification2Slack(&req.Payload)
+			_, err := sendNotification2Slack(&req.Payload)
 			if err != nil {
 				LogError.Error(fmt.Sprintf("failed to post message to slack:%s", err.Error()))
 			}

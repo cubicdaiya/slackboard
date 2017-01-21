@@ -193,7 +193,7 @@ func TestNotifyDirectlyHandlerQPS(t *testing.T) {
 		{
 			1,
 			map[string]interface{}{
-				"code": http.StatusBadGateway,
+				"code": http.StatusTooManyRequests,
 				"body": `{"message":"failed to post message to slack"}`,
 			},
 		},
