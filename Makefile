@@ -21,5 +21,8 @@ bin/slackboard-log: cmd/slackboard-log/slackboard-log.go slackboard/*.go
 fmt:
 	@echo $(TARGETS_NOVENDOR) | xargs go fmt
 
+test:
+	go test $(TARGETS_NOVENDOR)
+
 clean:
 	rm -rf bin/slackboard*
