@@ -16,14 +16,14 @@ func init() {
 }
 
 func rateLimitStart() {
-	atomic.AddInt32(&WaitClients, 1)
-	for atomic.LoadInt32(&WaitClients) > LimitClients {
+	for atomic.LoadInt32(&WaitClients) >= LimitClients {
 		// Slack does not allow to send
 		// no more than one message per second.
 		// But what bursts over the limit for short periods is allowed.
 		// refs: https://api.slack.com/docs/rate-limits
 		time.Sleep(1)
 	}
+	atomic.AddInt32(&WaitClients, 1)
 }
 
 func rateLimitEnd() {
