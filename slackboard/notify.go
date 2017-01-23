@@ -58,6 +58,9 @@ type SlackboardDirectPayload struct {
 }
 
 func sendNotification2Slack(payload *SlackPayload) error {
+	rateLimitStart()
+	defer rateLimitEnd()
+
 	body, err := json.Marshal(payload)
 	if err != nil {
 		return err
