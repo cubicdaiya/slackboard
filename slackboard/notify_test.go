@@ -168,37 +168,45 @@ func TestNotifyDirectlyHandlerQPS(t *testing.T) {
 	defer ts.Close()
 	ConfSlackboard.Core.SlackURL = ts.URL
 
-	inJSONStr := `{
-        "payload": {
-            "channel": "random",
-            "username": "slackboard",
-            "icon_emoji": ":clipboard:",
-            "text": "notification text",
-            "parse": "full"
-        },
-        "sync": true
-    }`
-
 	var testData = []struct {
-		in  int
+		in  map[string]interface{}
 		out map[string]interface{}
 	}{
 		{
-			0,
+			map[string]interface{}{
+				"qps":  0,
+				"sync": "true",
+			},
 			map[string]interface{}{
 				"code": http.StatusOK,
 				"body": `{"message":"ok"}`,
 			},
 		},
 		{
-			1,
+			map[string]interface{}{
+				"qps":  1,
+				"sync": "true",
+			},
 			map[string]interface{}{
 				"code": http.StatusTooManyRequests,
 				"body": `{"message":"failed to post message to slack"}`,
 			},
 		},
 		{
-			2,
+			map[string]interface{}{
+				"qps":  1,
+				"sync": "false",
+			},
+			map[string]interface{}{
+				"code": http.StatusOK,
+				"body": `{"message":"ok"}`,
+			},
+		},
+		{
+			map[string]interface{}{
+				"qps":  2,
+				"sync": "true",
+			},
 			map[string]interface{}{
 				"code": http.StatusOK,
 				"body": `{"message":"ok"}`,
@@ -208,7 +216,7 @@ func TestNotifyDirectlyHandlerQPS(t *testing.T) {
 
 	for _, tt := range testData {
 		// setup a qpsend
-		ConfSlackboard.Core.QPS = tt.in
+		ConfSlackboard.Core.QPS = tt.in["qps"].(int)
 		QPSEnd = NewQPSPerSlackEndpoint(ConfSlackboard)
 
 		// setup a test client
@@ -219,7 +227,7 @@ func TestNotifyDirectlyHandlerQPS(t *testing.T) {
 				req, err := http.NewRequest(
 					"POST",
 					"/notify-directly",
-					bytes.NewBuffer([]byte(inJSONStr)),
+					bytes.NewBuffer([]byte(createInJSONStr(tt.in["sync"].(string)))),
 				)
 				if err != nil {
 					t.Fatal(err)
@@ -235,10 +243,10 @@ func TestNotifyDirectlyHandlerQPS(t *testing.T) {
 		// check a response
 		for i := 0; i < qcount; i++ {
 			rr := <-ch
-			if i == 1 {
+			if 1 <= i {
 				// always ok
 				if status := rr.Code; status != http.StatusOK {
-					t.Errorf("status code: got %v want %v", status, http.StatusOK)
+					t.Errorf("status code: got %v want %v: qps %v", status, http.StatusOK, tt.in["qps"].(int))
 				}
 
 				expected := `{"message":"ok"}`
@@ -247,13 +255,13 @@ func TestNotifyDirectlyHandlerQPS(t *testing.T) {
 					t.Fatal(err)
 				}
 				if !jsonIsEqual {
-					t.Errorf("unexpected body: got %v want %v", rr.Body.String(), expected)
+					t.Errorf("unexpected body: got %v want %v: qps %v", rr.Body.String(), expected, tt.in["qps"].(int))
 				}
 			} else {
 				// depending on a qps setting
 				expectedCode := tt.out["code"].(int)
 				if status := rr.Code; status != expectedCode {
-					t.Errorf("status code: got %v want %v", status, expectedCode)
+					t.Errorf("status code: got %v want %v: qps %v", status, expectedCode, tt.in["qps"].(int))
 				}
 
 				expectedBody := tt.out["body"].(string)
@@ -262,7 +270,7 @@ func TestNotifyDirectlyHandlerQPS(t *testing.T) {
 					t.Fatal(err)
 				}
 				if !jsonIsEqual {
-					t.Errorf("unexpected body: got %v want %v", rr.Body.String(), expectedBody)
+					t.Errorf("unexpected body: got %v want %v: qps %v", rr.Body.String(), expectedBody, tt.in["qps"].(int))
 				}
 			}
 		}
@@ -278,4 +286,17 @@ func jsonBytesEqual(a, b []byte) (bool, error) {
 		return false, err
 	}
 	return reflect.DeepEqual(j2, j), nil
+}
+
+func createInJSONStr(sync string) string {
+	return `{
+        "payload": {
+            "channel": "random",
+            "username": "slackboard",
+            "icon_emoji": ":clipboard:",
+            "text": "notification text",
+            "parse": "full"
+        },
+        "sync": ` + sync +
+		`}`
 }

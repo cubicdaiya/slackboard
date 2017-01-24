@@ -57,9 +57,11 @@ type SlackboardDirectPayload struct {
 	Sync    bool         `json:"sync,omitempty"`
 }
 
-func sendNotification2Slack(payload *SlackPayload) (int, error) {
-	if QPSEnd != nil && !QPSEnd.Available() {
-		return http.StatusTooManyRequests, fmt.Errorf("QPS ratelimit error")
+func sendNotification2Slack(payload *SlackPayload, sync bool) (int, error) {
+	if QPSEnd != nil {
+		if sync && !QPSEnd.Available() {
+			return http.StatusTooManyRequests, fmt.Errorf("QPS ratelimit error")
+		}
 	}
 
 	body, err := json.Marshal(payload)
@@ -155,7 +157,7 @@ func NotifyHandler(w http.ResponseWriter, r *http.Request) {
 			}
 
 			if req.Sync {
-				status, err := sendNotification2Slack(payload)
+				status, err := sendNotification2Slack(payload, req.Sync)
 				if err != nil {
 					sendResponse(w, "failed to post message to slack", status)
 					return
@@ -163,7 +165,7 @@ func NotifyHandler(w http.ResponseWriter, r *http.Request) {
 				sent = true
 			} else {
 				go func() {
-					_, err := sendNotification2Slack(payload)
+					_, err := sendNotification2Slack(payload, req.Sync)
 					if err != nil {
 						LogError.Error(fmt.Sprintf("failed to post message to slack:%s", err.Error()))
 					}
@@ -215,14 +217,14 @@ func NotifyDirectlyHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if req.Sync {
-		status, err := sendNotification2Slack(&req.Payload)
+		status, err := sendNotification2Slack(&req.Payload, req.Sync)
 		if err != nil {
 			sendResponse(w, "failed to post message to slack", status)
 			return
 		}
 	} else {
 		go func() {
-			_, err := sendNotification2Slack(&req.Payload)
+			_, err := sendNotification2Slack(&req.Payload, req.Sync)
 			if err != nil {
 				LogError.Error(fmt.Sprintf("failed to post message to slack:%s", err.Error()))
 			}
