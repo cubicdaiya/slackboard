@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"reflect"
+	"sort"
 	"strings"
 	"testing"
 	"time"
@@ -202,7 +203,7 @@ func TestNotifyDirectlyHandlerQPS(t *testing.T) {
 			map[string]interface{}{
 				"code":  http.StatusTooManyRequests,
 				"body":  `{"message":"failed to post message to slack"}`,
-				"error": "[error] failed to post message to slack\n",
+				"error": "[warning] Reject a sync message due to ratelimit:{\"channel\":\"random\",\"username\":\"slackboard\",\"icon_emoji\":\":clipboard:\",\"text\":\"notification text\",\"parse\":\"full\",\"attachments\":null}\n[error] failed to post message to slack\n",
 			},
 		},
 		{
@@ -229,7 +230,7 @@ func TestNotifyDirectlyHandlerQPS(t *testing.T) {
 			map[string]interface{}{
 				"code":  http.StatusOK,
 				"body":  `{"message":"ok"}`,
-				"error": "[error] failed to post message to slack:QPS ratelimit error\n",
+				"error": "[warning] Reject an async message due to ratelimit:{\"channel\":\"random\",\"username\":\"slackboard\",\"icon_emoji\":\":clipboard:\",\"text\":\"notification text\",\"parse\":\"full\",\"attachments\":null}\n[error] failed to post message to slack:QPS ratelimit error\n",
 			},
 		},
 		{
@@ -259,7 +260,7 @@ func TestNotifyDirectlyHandlerQPS(t *testing.T) {
 			map[string]interface{}{
 				"code":  http.StatusOK,
 				"body":  `{"message":"ok"}`,
-				"error": strings.Repeat("[error] failed to post message to slack:QPS ratelimit error\n", 3),
+				"error": strings.Repeat("[warning] Reject an async message due to ratelimit:{\"channel\":\"random\",\"username\":\"slackboard\",\"icon_emoji\":\":clipboard:\",\"text\":\"notification text\",\"parse\":\"full\",\"attachments\":null}\n[error] failed to post message to slack:QPS ratelimit error\n", 3),
 			},
 		},
 		{
@@ -287,22 +288,22 @@ func TestNotifyDirectlyHandlerQPS(t *testing.T) {
 			map[string]interface{}{
 				"code":  http.StatusOK,
 				"body":  `{"message":"ok"}`,
-				"error": "[error] failed to post message to slack:QPS ratelimit error\n",
+				"error": "[warning] Reject an async message due to ratelimit:{\"channel\":\"random\",\"username\":\"slackboard\",\"icon_emoji\":\":clipboard:\",\"text\":\"notification text\",\"parse\":\"full\",\"attachments\":null}\n[error] failed to post message to slack:QPS ratelimit error\n",
 			},
 		},
 		{
-			// expect to reject 20 requests
-			// because it is not acceptable to have more than 50 in the queue
+			// expect to reject 40 requests
+			// because it is not acceptable to have more than 30 in the queue
 			map[string]interface{}{
 				"qps":                10,
 				"sync":               "false",
-				"max_delay_duration": 5,
+				"max_delay_duration": 3,
 				"parallel":           80,
 			},
 			map[string]interface{}{
 				"code":  http.StatusOK,
 				"body":  `{"message":"ok"}`,
-				"error": strings.Repeat("[error] failed to post message to slack:QPS ratelimit error\n", 20),
+				"error": strings.Repeat("[warning] Reject an async message due to ratelimit:{\"channel\":\"random\",\"username\":\"slackboard\",\"icon_emoji\":\":clipboard:\",\"text\":\"notification text\",\"parse\":\"full\",\"attachments\":null}\n[error] failed to post message to slack:QPS ratelimit error\n", 40),
 			},
 		},
 	}
@@ -386,7 +387,7 @@ func TestNotifyDirectlyHandlerQPS(t *testing.T) {
 			time.Sleep(time.Duration(waitSleep) * time.Second)
 		}
 		expectedErrorLog := tt.out["error"].(string)
-		if errorLog := buf.String(); errorLog != expectedErrorLog {
+		if errorLog := buf.String(); !multiLineStringEqual(errorLog, expectedErrorLog) {
 			t.Errorf("errorLog: got %v want %v: in %v", errorLog, expectedErrorLog, tt.in)
 		}
 	}
@@ -401,6 +402,14 @@ func jsonBytesEqual(a, b []byte) (bool, error) {
 		return false, err
 	}
 	return reflect.DeepEqual(j2, j), nil
+}
+
+func multiLineStringEqual(a, b string) bool {
+	m := strings.Split(a, "\n")
+	m2 := strings.Split(b, "\n")
+	sort.Strings(m)
+	sort.Strings(m2)
+	return reflect.DeepEqual(m, m2)
 }
 
 func createInJSONStr(sync string) string {

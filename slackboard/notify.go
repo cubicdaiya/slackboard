@@ -58,18 +58,20 @@ type SlackboardDirectPayload struct {
 }
 
 func sendNotification2Slack(payload *SlackPayload, sync bool) (int, error) {
-	if QPSEnd != nil {
-		if sync && !QPSEnd.Available() {
-			return http.StatusTooManyRequests, fmt.Errorf("QPS ratelimit error")
-		}
-		if !sync && !QPSEnd.WaitAndAvailable() {
-			return http.StatusTooManyRequests, fmt.Errorf("QPS ratelimit error")
-		}
-	}
-
 	body, err := json.Marshal(payload)
 	if err != nil {
 		return http.StatusBadGateway, err
+	}
+
+	if QPSEnd != nil {
+		if sync && !QPSEnd.Available() {
+			LogError.Warnf("Reject a sync message due to ratelimit:%s", string(body))
+			return http.StatusTooManyRequests, fmt.Errorf("QPS ratelimit error")
+		}
+		if !sync && !QPSEnd.WaitAndAvailable() {
+			LogError.Warnf("Reject an async message due to ratelimit:%s", string(body))
+			return http.StatusTooManyRequests, fmt.Errorf("QPS ratelimit error")
+		}
 	}
 
 	client := http.DefaultClient
