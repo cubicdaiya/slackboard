@@ -8,8 +8,15 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"reflect"
+	"strings"
 	"testing"
+	"time"
 )
+
+// Log is io.Writer
+type Log struct {
+	bytes.Buffer
+}
 
 func TestNotifyDirectlyHandler(t *testing.T) {
 	var testData = []struct {
@@ -173,43 +180,129 @@ func TestNotifyDirectlyHandlerQPS(t *testing.T) {
 		out map[string]interface{}
 	}{
 		{
+			// expect to disable qps
 			map[string]interface{}{
-				"qps":  0,
-				"sync": "true",
+				"qps":      0,
+				"sync":     "true",
+				"parallel": 2,
 			},
 			map[string]interface{}{
-				"code": http.StatusOK,
-				"body": `{"message":"ok"}`,
-			},
-		},
-		{
-			map[string]interface{}{
-				"qps":  1,
-				"sync": "true",
-			},
-			map[string]interface{}{
-				"code": http.StatusTooManyRequests,
-				"body": `{"message":"failed to post message to slack"}`,
+				"code":  http.StatusOK,
+				"body":  `{"message":"ok"}`,
+				"error": "",
 			},
 		},
 		{
+			// expect to reject a request
 			map[string]interface{}{
-				"qps":  1,
-				"sync": "false",
+				"qps":      1,
+				"sync":     "true",
+				"parallel": 2,
 			},
 			map[string]interface{}{
-				"code": http.StatusOK,
-				"body": `{"message":"ok"}`,
+				"code":  http.StatusTooManyRequests,
+				"body":  `{"message":"failed to post message to slack"}`,
+				"error": "[error] failed to post message to slack\n",
 			},
 		},
 		{
+			// expect to disable qps even core.qps > 0
 			map[string]interface{}{
-				"qps":  2,
-				"sync": "true",
+				"qps":      1,
+				"sync":     "false",
+				"parallel": 2,
 			},
 			map[string]interface{}{
-				"code": http.StatusOK,
-				"body": `{"message":"ok"}`,
+				"code":  http.StatusOK,
+				"body":  `{"message":"ok"}`,
+				"error": "",
+			},
+		},
+		{
+			// expect to reject a request
+			map[string]interface{}{
+				"qps":                1,
+				"sync":               "false",
+				"max_delay_duration": 0,
+				"parallel":           2,
+			},
+			map[string]interface{}{
+				"code":  http.StatusOK,
+				"body":  `{"message":"ok"}`,
+				"error": "[error] failed to post message to slack:QPS ratelimit error\n",
+			},
+		},
+		{
+			// expect to ensure posting a message
+			// because it is acceptable to have 1 in the queue
+			map[string]interface{}{
+				"qps":                1,
+				"sync":               "false",
+				"max_delay_duration": 1,
+				"parallel":           2,
+			},
+			map[string]interface{}{
+				"code":  http.StatusOK,
+				"body":  `{"message":"ok"}`,
+				"error": "",
+			},
+		},
+		{
+			// expect to reject 3 requests
+			// because it is not acceptable to have more than 1 in the queue
+			map[string]interface{}{
+				"qps":                1,
+				"sync":               "false",
+				"max_delay_duration": 1,
+				"parallel":           5,
+			},
+			map[string]interface{}{
+				"code":  http.StatusOK,
+				"body":  `{"message":"ok"}`,
+				"error": strings.Repeat("[error] failed to post message to slack:QPS ratelimit error\n", 3),
+			},
+		},
+		{
+			// expect to accept 2 requests at the same time
+			map[string]interface{}{
+				"qps":      2,
+				"sync":     "true",
+				"parallel": 2,
+			},
+			map[string]interface{}{
+				"code":  http.StatusOK,
+				"body":  `{"message":"ok"}`,
+				"error": "",
+			},
+		},
+		{
+			// expect to reject 1 request
+			// because it is not acceptable to have more than 2 in the queue
+			map[string]interface{}{
+				"qps":                2,
+				"sync":               "false",
+				"max_delay_duration": 1,
+				"parallel":           5,
+			},
+			map[string]interface{}{
+				"code":  http.StatusOK,
+				"body":  `{"message":"ok"}`,
+				"error": "[error] failed to post message to slack:QPS ratelimit error\n",
+			},
+		},
+		{
+			// expect to reject 20 requests
+			// because it is not acceptable to have more than 50 in the queue
+			map[string]interface{}{
+				"qps":                10,
+				"sync":               "false",
+				"max_delay_duration": 5,
+				"parallel":           80,
+			},
+			map[string]interface{}{
+				"code":  http.StatusOK,
+				"body":  `{"message":"ok"}`,
+				"error": strings.Repeat("[error] failed to post message to slack:QPS ratelimit error\n", 20),
 			},
 		},
 	}
@@ -217,11 +310,20 @@ func TestNotifyDirectlyHandlerQPS(t *testing.T) {
 	for _, tt := range testData {
 		// setup a qpsend
 		ConfSlackboard.Core.QPS = tt.in["qps"].(int)
+		if maxWait := tt.in["max_delay_duration"]; maxWait != nil {
+			ConfSlackboard.Core.MaxDelayDuration = maxWait.(int)
+		} else {
+			ConfSlackboard.Core.MaxDelayDuration = -1
+		}
 		QPSEnd = NewQPSPerSlackEndpoint(ConfSlackboard)
+
+		// setup a logger
+		buf := &Log{}
+		LogError.Out = buf
 
 		// setup a test client
 		ch := make(chan *httptest.ResponseRecorder)
-		qcount := 2
+		qcount := tt.in["parallel"].(int)
 		for i := 0; i < qcount; i++ {
 			go func() {
 				req, err := http.NewRequest(
@@ -246,7 +348,7 @@ func TestNotifyDirectlyHandlerQPS(t *testing.T) {
 			if 1 <= i {
 				// always ok
 				if status := rr.Code; status != http.StatusOK {
-					t.Errorf("status code: got %v want %v: qps %v", status, http.StatusOK, tt.in["qps"].(int))
+					t.Errorf("status code: got %v want %v: in %v", status, http.StatusOK, tt.in)
 				}
 
 				expected := `{"message":"ok"}`
@@ -255,13 +357,13 @@ func TestNotifyDirectlyHandlerQPS(t *testing.T) {
 					t.Fatal(err)
 				}
 				if !jsonIsEqual {
-					t.Errorf("unexpected body: got %v want %v: qps %v", rr.Body.String(), expected, tt.in["qps"].(int))
+					t.Errorf("unexpected body: got %v want %v: in %v", rr.Body.String(), expected, tt.in)
 				}
 			} else {
 				// depending on a qps setting
 				expectedCode := tt.out["code"].(int)
 				if status := rr.Code; status != expectedCode {
-					t.Errorf("status code: got %v want %v: qps %v", status, expectedCode, tt.in["qps"].(int))
+					t.Errorf("status code: got %v want %v: in %v", status, expectedCode, tt.in)
 				}
 
 				expectedBody := tt.out["body"].(string)
@@ -270,9 +372,22 @@ func TestNotifyDirectlyHandlerQPS(t *testing.T) {
 					t.Fatal(err)
 				}
 				if !jsonIsEqual {
-					t.Errorf("unexpected body: got %v want %v: qps %v", rr.Body.String(), expectedBody, tt.in["qps"].(int))
+					t.Errorf("unexpected body: got %v want %v: in %v", rr.Body.String(), expectedBody, tt.in)
 				}
 			}
+		}
+
+		if tt.in["sync"].(string) == "false" {
+			waitSleep := 1
+			if maxWait := tt.in["max_delay_duration"]; maxWait != nil {
+				waitSleep += maxWait.(int)
+				waitSleep *= 2 // it depends on heuristic
+			}
+			time.Sleep(time.Duration(waitSleep) * time.Second)
+		}
+		expectedErrorLog := tt.out["error"].(string)
+		if errorLog := buf.String(); errorLog != expectedErrorLog {
+			t.Errorf("errorLog: got %v want %v: in %v", errorLog, expectedErrorLog, tt.in)
 		}
 	}
 }

@@ -16,9 +16,10 @@ type ConfToml struct {
 }
 
 type SectionCore struct {
-	Port     string `toml:"port"`
-	SlackURL string `toml:"slack_url"`
-	QPS      int    `toml:"qps"`
+	Port             string `toml:"port"`
+	SlackURL         string `toml:"slack_url"`
+	QPS              int    `toml:"qps"`
+	MaxDelayDuration int    `toml:"max_delay_duration"`
 }
 
 type SectionTag struct {
@@ -45,6 +46,7 @@ func BuildDefaultConf() ConfToml {
 	conf.Core.Port = "29800"
 	conf.Core.SlackURL = ""
 	conf.Core.QPS = 0
+	conf.Core.MaxDelayDuration = -1 // means an empty parameter
 	// Log
 	conf.Log.AccessLog = "stdout"
 	conf.Log.ErrorLog = "stderr"

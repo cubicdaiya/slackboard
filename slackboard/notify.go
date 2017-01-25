@@ -62,6 +62,9 @@ func sendNotification2Slack(payload *SlackPayload, sync bool) (int, error) {
 		if sync && !QPSEnd.Available() {
 			return http.StatusTooManyRequests, fmt.Errorf("QPS ratelimit error")
 		}
+		if !sync && !QPSEnd.WaitAndAvailable() {
+			return http.StatusTooManyRequests, fmt.Errorf("QPS ratelimit error")
+		}
 	}
 
 	body, err := json.Marshal(payload)
