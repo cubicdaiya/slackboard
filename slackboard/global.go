@@ -8,6 +8,7 @@ import (
 
 var (
 	ConfSlackboard ConfToml
+	QPSEnd         *QPSPerSlackEndpoint
 	Topics         []Topic
 	LogAccess      *logrus.Logger
 	LogError       *logrus.Logger

@@ -24,6 +24,9 @@ func main() {
 		log.Fatal(err)
 	}
 
+	// make qps bucket
+	slackboard.QPSEnd = slackboard.NewQPSPerSlackEndpoint(slackboard.ConfSlackboard)
+
 	// set logger
 	err = slackboard.SetLogLevel(slackboard.LogAccess, "info")
 	if err != nil {

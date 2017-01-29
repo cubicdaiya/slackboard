@@ -57,10 +57,21 @@ type SlackboardDirectPayload struct {
 	Sync    bool         `json:"sync,omitempty"`
 }
 
-func sendNotification2Slack(payload *SlackPayload) error {
+func sendNotification2Slack(payload *SlackPayload, sync bool) (int, error) {
 	body, err := json.Marshal(payload)
 	if err != nil {
-		return err
+		return http.StatusBadGateway, err
+	}
+
+	if QPSEnd != nil {
+		if sync && !QPSEnd.Available() {
+			LogError.Warnf("Reject a sync message due to ratelimit:%s", string(body))
+			return http.StatusTooManyRequests, fmt.Errorf("QPS ratelimit error")
+		}
+		if !sync && !QPSEnd.WaitAndAvailable() {
+			LogError.Warnf("Reject an async message due to ratelimit:%s", string(body))
+			return http.StatusTooManyRequests, fmt.Errorf("QPS ratelimit error")
+		}
 	}
 
 	client := http.DefaultClient
@@ -71,16 +82,16 @@ func sendNotification2Slack(payload *SlackPayload) error {
 		strings.NewReader(string(body)))
 
 	if err != nil {
-		return err
+		return http.StatusBadGateway, err
 	}
 
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return fmt.Errorf("Slack is not available:%s", resp.Status)
+		return http.StatusBadGateway, fmt.Errorf("Slack is not available:%s", resp.Status)
 	}
 
-	return nil
+	return http.StatusOK, nil
 }
 
 func NotifyHandler(w http.ResponseWriter, r *http.Request) {
@@ -151,15 +162,15 @@ func NotifyHandler(w http.ResponseWriter, r *http.Request) {
 			}
 
 			if req.Sync {
-				err := sendNotification2Slack(payload)
+				status, err := sendNotification2Slack(payload, req.Sync)
 				if err != nil {
-					sendResponse(w, "failed to post message to slack", http.StatusBadGateway)
+					sendResponse(w, "failed to post message to slack", status)
 					return
 				}
 				sent = true
 			} else {
 				go func() {
-					err := sendNotification2Slack(payload)
+					_, err := sendNotification2Slack(payload, req.Sync)
 					if err != nil {
 						LogError.Error(fmt.Sprintf("failed to post message to slack:%s", err.Error()))
 					}
@@ -211,14 +222,14 @@ func NotifyDirectlyHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if req.Sync {
-		err := sendNotification2Slack(&req.Payload)
+		status, err := sendNotification2Slack(&req.Payload, req.Sync)
 		if err != nil {
-			sendResponse(w, "failed to post message to slack", http.StatusBadGateway)
+			sendResponse(w, "failed to post message to slack", status)
 			return
 		}
 	} else {
 		go func() {
-			err := sendNotification2Slack(&req.Payload)
+			_, err := sendNotification2Slack(&req.Payload, req.Sync)
 			if err != nil {
 				LogError.Error(fmt.Sprintf("failed to post message to slack:%s", err.Error()))
 			}
