@@ -33,7 +33,11 @@ func sendNotification2Slackboard(server, api, body string) error {
 	} else {
 		// TCP
 		client = &http.Client{}
+
 		url = fmt.Sprintf("http://%s/%s", server, api)
+		if strings.HasPrefix(server, "http://") || strings.HasPrefix(server, "https://") {
+			url = fmt.Sprintf("%s/%s", server, api)
+		}
 	}
 
 	resp, err := client.Post(
