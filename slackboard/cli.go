@@ -8,6 +8,7 @@ import (
 	"net"
 	"net/http"
 	"strings"
+	"time"
 )
 
 type UnixDial struct {
@@ -28,11 +29,14 @@ func sendNotification2Slackboard(server, api, body string) error {
 			Transport: &http.Transport{
 				Dial: (&UnixDial{sockPath: server[5:]}).Dial,
 			},
+			Timeout: 30 * time.Second,
 		}
 		url = fmt.Sprintf("http://localhost/%s", api)
 	} else {
 		// TCP
-		client = &http.Client{}
+		client = &http.Client{
+			Timeout: 30 * time.Second,
+		}
 
 		url = fmt.Sprintf("http://%s/%s", server, api)
 		if strings.HasPrefix(server, "http://") || strings.HasPrefix(server, "https://") {
