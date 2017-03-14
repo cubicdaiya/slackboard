@@ -1,8 +1,9 @@
 package slackboard
 
 import (
-	"github.com/juju/ratelimit"
 	"time"
+
+	"github.com/juju/ratelimit"
 )
 
 // QPSPerSlackEndpoint controls rate limiting.
