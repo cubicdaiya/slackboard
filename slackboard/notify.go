@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"strings"
 	"sync/atomic"
+	"time"
 )
 
 type SlackPayloadAttachmentsField struct {
@@ -74,7 +75,9 @@ func sendNotification2Slack(payload *SlackPayload, sync bool) (int, error) {
 		}
 	}
 
-	client := http.DefaultClient
+	client := &http.Client{
+		Timeout: 30 * time.Second,
+	}
 
 	resp, err := client.Post(
 		ConfSlackboard.Core.SlackURL,
