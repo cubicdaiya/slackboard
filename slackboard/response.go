@@ -16,7 +16,7 @@ func sendResponse(w http.ResponseWriter, msg string, code int) {
 		respSlackboard SlackboardResponse
 	)
 
-	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Content-Type", "application/json; charset=utf8")
 	w.Header().Set("Server", fmt.Sprintf("slackboard %s", Version))
 
 	respSlackboard.Message = msg
