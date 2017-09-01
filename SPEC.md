@@ -9,8 +9,6 @@ Slackboard has some APIs.
  * [POST /notify](#post-notify)
  * [POST /notify-directly](#post-notify-directly)
  * [GET /stat/go](#get-statgo)
- * [GET /config/app](#get-configapp)
- * [GET /app/config](#get-configapp)
 
 ### POST /notify
 
@@ -92,11 +90,3 @@ When Slackboard receives an invalid request(for example, malformed body is inclu
 ### GET /stat/go
 
 Returns a statictics for golang-runtime. See [golang-stats-api-handler](https://github.com/fukata/golang-stats-api-handler) about details.
-
-### GET /config/app
-
-Returns a current configuration for Slackboard.
-
-### GET /app/config (deprecated)
-
-Returns a current configuration for Slackboard. This API is deprecated.

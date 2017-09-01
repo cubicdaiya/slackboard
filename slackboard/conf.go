@@ -1,10 +1,7 @@
 package slackboard
 
 import (
-	"bytes"
 	"errors"
-	"fmt"
-	"net/http"
 
 	"github.com/BurntSushi/toml"
 )
@@ -79,19 +76,4 @@ func LoadConf(confPath string, confToml *ConfToml) error {
 		Topics = append(Topics, topic)
 	}
 	return nil
-}
-
-func ConfigAppHandler(w http.ResponseWriter, r *http.Request) {
-	var b bytes.Buffer
-	e := toml.NewEncoder(&b)
-	result := ConfSlackboard
-	result.Core.SlackURL = "..."
-	err := e.Encode(result)
-	if err != nil {
-		msg := "Response-body could not be created"
-		http.Error(w, msg, http.StatusInternalServerError)
-		return
-	}
-
-	fmt.Fprintf(w, b.String())
 }
