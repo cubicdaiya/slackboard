@@ -32,7 +32,8 @@ func sendResponse(w http.ResponseWriter, msg string, code int) {
 	case http.StatusOK:
 		fmt.Fprintf(w, string(respBody))
 	default:
-		http.Error(w, string(respBody), code)
+		w.WriteHeader(code)
+		w.Write(respBody)
 		LogError.Error(msg)
 	}
 }
