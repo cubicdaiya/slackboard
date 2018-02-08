@@ -106,7 +106,7 @@ slackboard-log -s 127.0.0.1:29800 -c random -- some-command
 
 ## License
 
-Copyright 2014-2017 Tatsuhiko Kubo
+Copyright 2014-2018 Tatsuhiko Kubo
 
 
 Licensed under the MIT License.

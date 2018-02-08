@@ -46,6 +46,5 @@ func main() {
 	}
 
 	slackboard.RegisterAPIs()
-	slackboard.SetupUI()
 	slackboard.Run()
 }

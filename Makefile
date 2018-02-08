@@ -5,10 +5,6 @@ all: bin/slackboard bin/slackboard-cli bin/slackboard-log
 bundle:
 	glide install
 
-bindata:
-	go-bindata -pkg slackboard ./ui/* && mv bindata.go slackboard/
-	go fmt slackboard/bindata.go
-
 bin/slackboard: cmd/slackboard/slackboard.go slackboard/*.go
 	go build $(GOFLAGS) -o bin/slackboard cmd/slackboard/slackboard.go
 

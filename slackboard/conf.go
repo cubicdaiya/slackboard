@@ -72,8 +72,6 @@ func LoadConf(confPath string, confToml *ConfToml) error {
 		if tag.Parse == "" {
 			confToml.Tags[i].Parse = "full"
 		}
-		topic := Topic{Tag: confToml.Tags[i], Count: 0}
-		Topics = append(Topics, topic)
 	}
 	return nil
 }
