@@ -1,0 +1,12 @@
+github.com/BurntSushi/toml v0.3.0 h1:e1/Ivsx3Z0FVTV0NSOv/aVgbUWyQuzj7DDnFblkRvsY=
+github.com/BurntSushi/toml v0.3.0/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
+github.com/fukata/golang-stats-api-handler v0.0.0-20160325105040-ab9f90f16caa h1:YxLexpeQS0Fz/sNa3QQEgLWyVhgNhEB1GQUi+c45nFs=
+github.com/fukata/golang-stats-api-handler v0.0.0-20160325105040-ab9f90f16caa/go.mod h1:1sIi4/rHq6s/ednWMZqTmRq3765qTUSs/c3xF6lj8J8=
+github.com/juju/ratelimit v0.0.0-20151125201925-77ed1c8a0121 h1:tK7/W+/VbVcqFcQzl3qMnrc/z3h/XOBIrJ9e/cv5hx4=
+github.com/juju/ratelimit v0.0.0-20151125201925-77ed1c8a0121/go.mod h1:qapgC/Gy+xNh9UxzV13HGGl/6UXNN+ct+vwSgWNm/qk=
+github.com/sirupsen/logrus v1.0.3 h1:B5C/igNWoiULof20pKfY4VntcIPqKuwEmoLZrabbUrc=
+github.com/sirupsen/logrus v1.0.3/go.mod h1:pMByvHTf9Beacp5x1UXfOR9xyW/9antXMhjMPG0dEzc=
+golang.org/x/crypto v0.0.0-20181127143415-eb0de9b17e85 h1:et7+NAX3lLIk5qUCTA9QelBjGE/NkhzYw/mhnr0s7nI=
+golang.org/x/crypto v0.0.0-20181127143415-eb0de9b17e85/go.mod h1:6SG95UA2DQfeDnfUPMdvaQW0Q7yPrPDi9nlGo2tz2b4=
+golang.org/x/sys v0.0.0-20181128092732-4ed8d59d0b35 h1:YAFjXN64LMvktoUZH9zgY4lGc/msGN7HQfoSuKCgaDU=
+golang.org/x/sys v0.0.0-20181128092732-4ed8d59d0b35/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
