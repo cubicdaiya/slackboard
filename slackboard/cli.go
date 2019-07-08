@@ -9,6 +9,8 @@ import (
 	"net/http"
 	"strings"
 	"time"
+
+	retryablehttp "github.com/hashicorp/go-retryablehttp"
 )
 
 type UnixDial struct {
@@ -20,22 +22,26 @@ func (u UnixDial) Dial(proto, addr string) (conn net.Conn, err error) {
 }
 
 func sendNotification2Slackboard(server, api, body string) error {
-	var client *http.Client
+	var client *retryablehttp.Client
 	var url string
 
 	if strings.HasPrefix(server, "unix:/") {
 		// UNIX Socket
-		client = &http.Client{
-			Transport: &http.Transport{
-				Dial: (&UnixDial{sockPath: server[5:]}).Dial,
+		client = &retryablehttp.Client{
+			HTTPClient: &http.Client{
+				Transport: &http.Transport{
+					Dial: (&UnixDial{sockPath: server[5:]}).Dial,
+				},
+				Timeout: 30 * time.Second,
 			},
-			Timeout: 30 * time.Second,
 		}
 		url = fmt.Sprintf("http://localhost/%s", api)
 	} else {
 		// TCP
-		client = &http.Client{
-			Timeout: 30 * time.Second,
+		client = &retryablehttp.Client{
+			HTTPClient: &http.Client{
+				Timeout: 30 * time.Second,
+			},
 		}
 
 		url = fmt.Sprintf("http://%s/%s", server, api)
