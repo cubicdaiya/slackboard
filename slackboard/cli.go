@@ -9,33 +9,51 @@ import (
 	"net/http"
 	"strings"
 	"time"
+
+	retryablehttp "github.com/hashicorp/go-retryablehttp"
 )
 
 type UnixDial struct {
 	sockPath string
 }
 
+type Retry struct {
+	WaitMin time.Duration
+	WaitMax time.Duration
+	Max     int
+}
+
 func (u UnixDial) Dial(proto, addr string) (conn net.Conn, err error) {
 	return net.Dial("unix", u.sockPath)
 }
 
-func sendNotification2Slackboard(server, api, body string) error {
-	var client *http.Client
+func sendNotification2Slackboard(server, api, body string, retry *Retry) error {
+	var client *retryablehttp.Client
 	var url string
 
 	if strings.HasPrefix(server, "unix:/") {
 		// UNIX Socket
-		client = &http.Client{
-			Transport: &http.Transport{
-				Dial: (&UnixDial{sockPath: server[5:]}).Dial,
+		client = &retryablehttp.Client{
+			HTTPClient: &http.Client{
+				Transport: &http.Transport{
+					Dial: (&UnixDial{sockPath: server[5:]}).Dial,
+				},
+				Timeout: 30 * time.Second,
 			},
-			Timeout: 30 * time.Second,
+			RetryWaitMin: retry.WaitMin,
+			RetryWaitMax: retry.WaitMax,
+			RetryMax:     retry.Max,
 		}
 		url = fmt.Sprintf("http://localhost/%s", api)
 	} else {
 		// TCP
-		client = &http.Client{
-			Timeout: 30 * time.Second,
+		client = &retryablehttp.Client{
+			HTTPClient: &http.Client{
+				Timeout: 30 * time.Second,
+			},
+			RetryWaitMin: retry.WaitMin,
+			RetryWaitMax: retry.WaitMax,
+			RetryMax:     retry.Max,
 		}
 
 		url = fmt.Sprintf("http://%s/%s", server, api)
@@ -62,7 +80,7 @@ func sendNotification2Slackboard(server, api, body string) error {
 	return nil
 }
 
-func SendNotification2SlackboardDirectly(server string, payload *SlackboardDirectPayload) error {
+func SendNotification2SlackboardDirectly(server string, payload *SlackboardDirectPayload, retry *Retry) error {
 	if strings.Index(payload.Payload.Channel, "#") != 0 &&
 		strings.Index(payload.Payload.Channel, "@") != 0 {
 		payload.Payload.Channel = "#" + payload.Payload.Channel
@@ -73,14 +91,14 @@ func SendNotification2SlackboardDirectly(server string, payload *SlackboardDirec
 		return err
 	}
 
-	return sendNotification2Slackboard(server, "notify-directly", string(body))
+	return sendNotification2Slackboard(server, "notify-directly", string(body), retry)
 }
 
-func SendNotification2Slackboard(server string, payload *SlackboardPayload) error {
+func SendNotification2Slackboard(server string, payload *SlackboardPayload, retry *Retry) error {
 	body, err := json.Marshal(payload)
 	if err != nil {
 		return err
 	}
 
-	return sendNotification2Slackboard(server, "notify", string(body))
+	return sendNotification2Slackboard(server, "notify", string(body), retry)
 }

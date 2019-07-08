@@ -6,6 +6,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"time"
 
 	"github.com/cubicdaiya/slackboard/slackboard"
 )
@@ -23,6 +24,9 @@ func main() {
 	level := flag.String("l", "message", "level")
 	color := flag.String("C", "", "color")
 	title := flag.String("title", "", "title")
+	retryMax := flag.Int("retry-max", 4, "Maximum number of retries")
+	retryWaitMin := flag.Duration("retry-wait-min", 1*time.Second, "Minimum time to wait when retry")
+	retryWaitMax := flag.Duration("retry-wait-max", 10*time.Second, "Maximum time to wait when retry")
 	flag.Parse()
 
 	if *version {
@@ -51,6 +55,12 @@ func main() {
 		log.Fatal("Assigning with '-t' and '-c' at once is not allowed")
 	}
 
+	retry := &slackboard.Retry{
+		WaitMin: *retryWaitMin,
+		WaitMax: *retryWaitMax,
+		Max:     *retryMax,
+	}
+
 	hostname, err := os.Hostname()
 	if err != nil {
 		hostname = "localhost"
@@ -70,7 +80,7 @@ func main() {
 			Title: *title,
 		}
 
-		err = slackboard.SendNotification2Slackboard(*server, payload)
+		err = slackboard.SendNotification2Slackboard(*server, payload, retry)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -112,7 +122,7 @@ func main() {
 		Sync:    *sync,
 	}
 
-	err = slackboard.SendNotification2SlackboardDirectly(*server, payloadDirectly)
+	err = slackboard.SendNotification2SlackboardDirectly(*server, payloadDirectly, retry)
 	if err != nil {
 		log.Fatal(err)
 	}
