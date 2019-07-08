@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/exec"
 	"strings"
+	"time"
 
 	"github.com/cubicdaiya/slackboard/slackboard"
 )
@@ -23,6 +24,9 @@ func main() {
 	username := flag.String("u", "slackboard", "user name")
 	iconemoji := flag.String("i", ":clipboard:", "emoji icon")
 	parse := flag.String("p", "full", "parsing mode")
+	retryMax := flag.Int("retry-max", 4, "Maximum number of retries")
+	retryWaitMin := flag.Duration("retry-wait-min", 1*time.Second, "Minimum time to wait when retry")
+	retryWaitMax := flag.Duration("retry-wait-max", 10*time.Second, "Maximum time to wait when retry")
 	flag.Parse()
 
 	if *version {
@@ -57,6 +61,12 @@ func main() {
 		log.Fatal("command is not specified")
 	}
 
+	retry := &slackboard.Retry{
+		WaitMin: *retryWaitMin,
+		WaitMax: *retryWaitMax,
+		Max:     *retryMax,
+	}
+
 	hostname, err := os.Hostname()
 	if err != nil {
 		hostname = "localhost"
@@ -88,7 +98,7 @@ Error  : %s
 				Level: "crit",
 			}
 
-			err = slackboard.SendNotification2Slackboard(*server, payload)
+			err = slackboard.SendNotification2Slackboard(*server, payload, retry)
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -111,7 +121,7 @@ Error  : %s
 				Sync:    *sync,
 			}
 
-			err = slackboard.SendNotification2SlackboardDirectly(*server, payloadDirectly)
+			err = slackboard.SendNotification2SlackboardDirectly(*server, payloadDirectly, retry)
 			if err != nil {
 				log.Fatal(err)
 			}
