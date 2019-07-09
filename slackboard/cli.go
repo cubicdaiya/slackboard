@@ -43,6 +43,8 @@ func sendNotification2Slackboard(server, api, body string, retry *Retry) error {
 			RetryWaitMin: retry.WaitMin,
 			RetryWaitMax: retry.WaitMax,
 			RetryMax:     retry.Max,
+			CheckRetry:   retryablehttp.DefaultRetryPolicy,
+			Backoff:      retryablehttp.DefaultBackoff,
 		}
 		url = fmt.Sprintf("http://localhost/%s", api)
 	} else {
@@ -54,6 +56,8 @@ func sendNotification2Slackboard(server, api, body string, retry *Retry) error {
 			RetryWaitMin: retry.WaitMin,
 			RetryWaitMax: retry.WaitMax,
 			RetryMax:     retry.Max,
+			CheckRetry:   retryablehttp.DefaultRetryPolicy,
+			Backoff:      retryablehttp.DefaultBackoff,
 		}
 
 		url = fmt.Sprintf("http://%s/%s", server, api)
