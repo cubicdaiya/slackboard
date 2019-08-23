@@ -10,12 +10,13 @@ A configuration for Slackboard has some sections. A example is [here](conf/slack
 
 ## Core Section
 
-|name     |type  |description                    |default|note                                 |
-|---------|------|-------------------------------|-------|-------------------------------------|
-|port     |string|port number or unix socket path|29800  |e.g.)29800, unix:/tmp/slackboard.sock|
-|slack_url|string|Incomming Webhook url for slack|       |                                     |
-|qps      |int   |Queries to slack Per Second    |0      |0 means unlimited. See also [slack api docs](https://api.slack.com/docs/rate-limits) |
-|max_delay_duration |int   |Allowable delay message seconds    |      |must be specified when using qps > 0 and planning to process requests with sync=false |
+|name               |type  |description                    |default|note                                 |
+|-------------------|------|-------------------------------|-------|-------------------------------------|
+|port               |string|port number or unix socket path|29800  |e.g.)29800, unix:/tmp/slackboard.sock|
+|slack_url          |string|Incomming Webhook url for slack|       |If slack_token is specified, this field won't be used.|
+|slack_token        |string|Slack token to post messages   |       |token with permission to use [chat.postMessage](https://api.slack.com/methods/chat.postMessage)|
+|qps                |int   |Queries to slack Per Second    |0      |0 means unlimited. See also [slack api docs](https://api.slack.com/docs/rate-limits) |
+|max_delay_duration |int   |Allowable delay message seconds|       |must be specified when using qps > 0 and planning to process requests with sync=false |
 
 ## Tag Section
 
