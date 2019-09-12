@@ -102,7 +102,7 @@ func sendNotification2Slack(payload *SlackPayload, sync bool) (int, error) {
 	}
 
 	req, err := http.NewRequest(
-		"POST",
+		http.MethodPost,
 		SlackPostMessageAPIURL,
 		bytes.NewReader(body),
 	)
@@ -157,7 +157,7 @@ func NotifyHandler(w http.ResponseWriter, r *http.Request) {
 	LogAcceptedRequest(r, req.Tag)
 
 	LogError.Debug("method check")
-	if r.Method != "POST" {
+	if r.Method != http.MethodPost {
 		sendResponse(w, "invalid method", http.StatusBadRequest)
 		return
 	}
@@ -257,7 +257,7 @@ func NotifyDirectlyHandler(w http.ResponseWriter, r *http.Request) {
 	LogAcceptedRequest(r, req.Payload.Channel)
 
 	LogError.Debug("method check")
-	if r.Method != "POST" {
+	if r.Method != http.MethodPost {
 		sendResponse(w, "invalid method", http.StatusBadRequest)
 		return
 	}

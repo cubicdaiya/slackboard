@@ -97,7 +97,7 @@ func TestNotifyDirectlyHandler_PostMessage(t *testing.T) {
 
 		// setup a test client
 		req, err := http.NewRequest(
-			"POST",
+			http.MethodPost,
 			"/notify-directly",
 			bytes.NewBuffer([]byte(tt.in)),
 		)
@@ -200,7 +200,7 @@ func TestNotifyDirectlyHandler_IncomingWebhook(t *testing.T) {
 
 		// setup a test client
 		req, err := http.NewRequest(
-			"POST",
+			http.MethodPost,
 			"/notify-directly",
 			bytes.NewBuffer([]byte(tt.in)),
 		)
@@ -249,7 +249,7 @@ func TestNotifyDirectlyHandlerSlackServerError_PostMessage(t *testing.T) {
         "sync": true
     }`
 	req, err := http.NewRequest(
-		"POST",
+		http.MethodPost,
 		"/notify-directly",
 		bytes.NewBuffer([]byte(inJSONStr)),
 	)
@@ -297,7 +297,7 @@ func TestNotifyDirectlyHandlerSlackServerError_IncomingWebhook(t *testing.T) {
         "sync": true
     }`
 	req, err := http.NewRequest(
-		"POST",
+		http.MethodPost,
 		"/notify-directly",
 		bytes.NewBuffer([]byte(inJSONStr)),
 	)
@@ -484,7 +484,7 @@ func TestNotifyDirectlyHandlerQPS(t *testing.T) {
 		for i := 0; i < qcount; i++ {
 			go func() {
 				req, err := http.NewRequest(
-					"POST",
+					http.MethodPost,
 					"/notify-directly",
 					bytes.NewBuffer([]byte(createInJSONStr(tt.in["sync"].(string)))),
 				)
