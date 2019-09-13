@@ -1,6 +1,7 @@
 [core]
 port = "29800"
-slack_url = "https://hooks.slack.com/services/..."
+slack_url = "https://hooks.slack.com/services/..." # if you use Legacy Incoming Webhooks
+slack_token = "xoxb-00000-00000-xxxxxxxxxxx"       # post messages as Slack App Bot User
 
 [[tags]]
 tag = "general"

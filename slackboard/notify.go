@@ -1,12 +1,16 @@
 package slackboard
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"strings"
 	"time"
+)
+
+var (
+	SlackPostMessageAPIURL = `https://slack.com/api/chat.postMessage`
 )
 
 type SlackPayloadAttachmentsField struct {
@@ -78,19 +82,55 @@ func sendNotification2Slack(payload *SlackPayload, sync bool) (int, error) {
 		Timeout: 30 * time.Second,
 	}
 
-	resp, err := client.Post(
-		ConfSlackboard.Core.SlackURL,
-		"application/json",
-		strings.NewReader(string(body)))
+	if len(ConfSlackboard.Core.SlackToken) == 0 {
+		// if SlackToken is not specified, use Incoming Webhook
+		resp, err := client.Post(
+			ConfSlackboard.Core.SlackURL,
+			"application/json",
+			bytes.NewReader(body),
+		)
+		if err != nil {
+			return http.StatusBadGateway, err
+		}
+		defer resp.Body.Close()
 
+		if resp.StatusCode != http.StatusOK {
+			return http.StatusBadGateway, fmt.Errorf("Slack is not available:%s", resp.Status)
+		}
+
+		return http.StatusOK, nil
+	}
+
+	req, err := http.NewRequest(
+		http.MethodPost,
+		SlackPostMessageAPIURL,
+		bytes.NewReader(body),
+	)
 	if err != nil {
 		return http.StatusBadGateway, err
 	}
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", "Bearer "+ConfSlackboard.Core.SlackToken)
 
+	resp, err := client.Do(req)
+	if err != nil {
+		return http.StatusBadGateway, err
+	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
 		return http.StatusBadGateway, fmt.Errorf("Slack is not available:%s", resp.Status)
+	}
+
+	var errResp struct {
+		OK    bool   `json:"ok"`
+		Error string `json:"error"`
+	}
+	if err := json.NewDecoder(resp.Body).Decode(&errResp); err != nil {
+		return http.StatusBadGateway, fmt.Errorf("Slack returned invalid format response, should be json: %s", err)
+	}
+	if !errResp.OK {
+		return http.StatusBadGateway, fmt.Errorf("Slack returned error response: %s", errResp.Error)
 	}
 
 	return http.StatusOK, nil
@@ -117,7 +157,7 @@ func NotifyHandler(w http.ResponseWriter, r *http.Request) {
 	LogAcceptedRequest(r, req.Tag)
 
 	LogError.Debug("method check")
-	if r.Method != "POST" {
+	if r.Method != http.MethodPost {
 		sendResponse(w, "invalid method", http.StatusBadRequest)
 		return
 	}
@@ -217,7 +257,7 @@ func NotifyDirectlyHandler(w http.ResponseWriter, r *http.Request) {
 	LogAcceptedRequest(r, req.Payload.Channel)
 
 	LogError.Debug("method check")
-	if r.Method != "POST" {
+	if r.Method != http.MethodPost {
 		sendResponse(w, "invalid method", http.StatusBadRequest)
 		return
 	}
