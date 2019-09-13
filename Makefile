@@ -15,7 +15,7 @@ fmt:
 	go fmt ./...
 
 test:
-	go test $(TARGETS_NOVENDOR)
+	go test ./...
 
 clean:
 	rm -rf bin/slackboard*
