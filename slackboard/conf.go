@@ -2,8 +2,9 @@ package slackboard
 
 import (
 	"errors"
+	"io/ioutil"
 
-	"github.com/BurntSushi/toml"
+	"github.com/pelletier/go-toml"
 )
 
 type ConfToml struct {
@@ -54,8 +55,11 @@ func BuildDefaultConf() ConfToml {
 }
 
 func LoadConf(confPath string, confToml *ConfToml) error {
-	_, err := toml.DecodeFile(confPath, confToml)
+	doc, err := ioutil.ReadFile(confPath)
 	if err != nil {
+		return err
+	}
+	if err := toml.Unmarshal(doc, confToml); err != nil {
 		return err
 	}
 	for i, tag := range confToml.Tags {
