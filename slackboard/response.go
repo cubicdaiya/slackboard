@@ -30,7 +30,7 @@ func sendResponse(w http.ResponseWriter, msg string, code int) {
 
 	switch code {
 	case http.StatusOK:
-		fmt.Fprintf(w, string(respBody))
+		w.Write(respBody)
 	default:
 		w.WriteHeader(code)
 		w.Write(respBody)
